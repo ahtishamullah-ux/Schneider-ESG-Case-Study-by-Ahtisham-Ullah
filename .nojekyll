@@ -1,0 +1,3 @@
+# Tells GitHub Pages to serve files exactly as-is (no Jekyll processing).
+# This ensures sitemap.xml, robots.txt and all assets work correctly.
+# Keep this file — it must stay in the repo root next to index.html.
