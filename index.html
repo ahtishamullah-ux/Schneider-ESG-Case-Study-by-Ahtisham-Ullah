@@ -3,295 +3,259 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ahtisham Ullah · Schneider Electric ESG Case Study + Telemetry Dashboards</title>
+<title>Ahtisham Ullah — Schneider Electric ESG Case Study</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --canvas:#f2f4f8;      /* soft gray app canvas */
-    --ink:#0b1220;         /* near-black headings */
-    --body:#1f2937;        /* high-contrast body text */
-    --sub:#475569;         /* secondary text — never lighter than this inside content */
-    --line:#dde3ec;
+    --paper:#f8f6f2;        /* warm paper canvas */
+    --sheet:#ffffff;
+    --ink:#1c1917;          /* book ink */
+    --body:#292524;
+    --sub:#57534e;
+    --faint:#78716c;
+    --line:#e3e0da;
+    --rule:#1c1917;
   }
   html{scroll-behavior:smooth}
-  body{
-    background:var(--canvas);
-    font-family:'Space Grotesk',system-ui,sans-serif;
-    color:var(--body);
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
-  }
+  body{background:var(--paper);color:var(--body);font-family:'EB Garamond',Georgia,serif;-webkit-font-smoothing:antialiased}
+  .ui{font-family:'Inter',system-ui,sans-serif}
   .mono{font-family:'JetBrains Mono',monospace}
-  /* ambient: paper-canvas texture */
-  .bg-scene{position:fixed;inset:0;z-index:-2;pointer-events:none;
-    background:
-      radial-gradient(900px 500px at 12% -10%, rgba(8,145,178,.07), transparent 60%),
-      radial-gradient(800px 500px at 88% 0%, rgba(109,40,217,.05), transparent 60%),
-      var(--canvas);
-  }
-  .bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
-    background-image:
-      linear-gradient(rgba(15,23,42,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15,23,42,.04) 1px, transparent 1px);
-    background-size:44px 44px;
-    mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 85%);
-    -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 85%);
-  }
-  .glass{
-    background:#ffffff;
-    border:1px solid var(--line);
-    box-shadow:0 1px 3px rgba(15,23,42,.06);
-  }
-  .card-glow{transition:transform .4s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s}
-  .card-glow:hover{transform:translateY(-3px);border-color:#67e8f9;box-shadow:0 18px 45px -18px rgba(8,145,178,.25)}
-  /* status pips */
+  .sc{font-family:'Inter';text-transform:uppercase;letter-spacing:.18em;font-size:11px;font-weight:600;color:var(--sub)}
+
+  /* ── classic page frame ── */
+  .rule-top{border-top:3px double var(--rule)}
+  .rule-sm{border-top:1px solid var(--rule)}
+  .card{background:var(--sheet);border:1px solid var(--line);border-radius:10px;box-shadow:0 1px 2px rgba(28,25,23,.05)}
+  .view{animation:viewIn .45s ease both}
+  @keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ── nav tabs ── */
+  .tab-btn{font-family:'Inter';font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 2px;transition:color .2s;position:relative}
+  .tab-btn:hover{color:var(--ink)}
+  .tab-btn.active{color:var(--ink)}
+  .tab-btn.active::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink)}
+
+  /* ── paper typography ── */
+  .paper-body{font-size:1.18rem;line-height:1.78;color:var(--body)}
+  .paper-body p{margin-bottom:1.05rem;text-align:justify;text-justify:inter-word;hyphens:auto}
+  .paper-body sup{font-family:'Inter';font-size:.62em;font-weight:600;color:#1e40af}
+  .paper-body strong{font-weight:700;color:var(--ink)}
+  .paper-body em{color:var(--ink)}
+  .paper-lede{font-size:1.28rem;line-height:1.72;color:var(--ink)}
+  .ph2{font-weight:600;font-size:1.55rem;color:var(--ink);margin:2.6rem 0 1.1rem;padding-bottom:.45rem;border-bottom:1px solid var(--rule);line-height:1.25}
+  .ph2 .n{font-family:'Inter';font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--faint);display:block;margin-bottom:.35rem;text-transform:uppercase}
+  .ph3{font-weight:700;font-size:1.12rem;color:var(--ink);font-style:italic;margin:1.9rem 0 .6rem}
+  .dropcap::first-letter{font-weight:600;font-size:3.1em;float:left;line-height:.82;padding:.06em .12em 0 0;color:var(--ink)}
+  .runin{font-weight:700;color:var(--ink)}
+  .pq{font-size:1.24rem;font-style:italic;line-height:1.6;color:var(--ink);border-left:2px solid var(--rule);padding-left:1.3rem;margin:1.9rem 0}
+  .pq cite{display:block;font-family:'Inter';font-style:normal;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:.8rem}
+
+  /* ── booktabs tables (LaTeX style) ── */
+  .figbox{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:1.4rem 1.5rem;margin:1.7rem 0}
+  .tabcap{font-family:'Inter';font-size:11px;letter-spacing:.08em;color:var(--sub);text-align:center;margin-bottom:.9rem;line-height:1.5}
+  .tabcap b{color:var(--ink);font-weight:700}
+  .figcap{font-family:'Inter';font-size:11px;letter-spacing:.08em;color:var(--faint);text-align:center;margin-top:.9rem;line-height:1.5}
+  .bt{width:100%;border-collapse:collapse}
+  .bt th{font-family:'Inter';font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#44403c;border-top:2px solid var(--rule);border-bottom:1px solid #78716c;padding:.65rem .85rem;text-align:left;background:none}
+  .bt td{padding:.65rem .85rem;border-bottom:1px solid #eae8e4;color:var(--body);font-size:.98rem}
+  .bt tr:last-child td{border-bottom:2px solid var(--rule)}
+  .bt .num{font-family:'JetBrains Mono';font-size:.84rem;color:var(--ink)}
+
+  /* ── references: hanging indent ── */
+  .refs{list-style:none;counter-reset:ref}
+  .refs li{margin-bottom:.8rem;padding-left:2.1rem;text-indent:-2.1rem;font-size:1.0rem;line-height:1.62;color:var(--body)}
+  .refs li b{color:var(--ink);font-weight:600}
+
+  /* ── contact icon buttons ── */
+  .cbtn{position:relative;width:42px;height:42px;border-radius:9999px;display:grid;place-items:center;background:#fff;border:1px solid #d6d3d1;box-shadow:0 1px 2px rgba(28,25,23,.08);transition:transform .2s,border-color .2s,box-shadow .2s}
+  .cbtn:hover{transform:translateY(-2px);border-color:#a8a29e;box-shadow:0 6px 14px -6px rgba(28,25,23,.25)}
+  .cbtn .tip{pointer-events:none;position:absolute;top:-38px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:'JetBrains Mono';font-size:11px;padding:6px 10px;border-radius:6px;background:#1c1917;color:#fafaf9;opacity:0;transition:opacity .18s;z-index:30}
+  .cbtn:hover .tip{opacity:1}
+
+  /* ── dashboard accents ── */
+  .dash-card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(28,25,23,.05);transition:box-shadow .25s,transform .25s}
+  .dash-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(28,25,23,.2)}
   .pip{width:8px;height:8px;border-radius:9999px;display:inline-block}
-  .pip-ok{background:#059669}
-  .pip-warn{background:#d97706}
+  .pip-ok{background:#059669}.pip-warn{background:#d97706}
   .pip-crit{background:#dc2626;animation:blink 1s steps(2,start) infinite}
   .pip-rec{background:#dc2626;animation:blink 1.1s steps(2,start) infinite}
   @keyframes blink{50%{opacity:.2}}
-  @keyframes flash{0%{color:#0e7490}100%{color:inherit}}
-  .flash{animation:flash .6s ease-out}
-  .view{animation:viewIn .5s cubic-bezier(.2,.8,.2,1) both}
-  @keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  /* tabs */
-  .tab-btn{position:relative;transition:color .25s}
-  .tab-btn.active{color:#0b1220}
-  .tab-btn.active::after{content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:2.5px;border-radius:2px;
-    background:linear-gradient(90deg,#0e7490,#6d28d9)}
-  /* scrollbars */
+  @keyframes flash{0%{color:#1d4ed8}100%{color:inherit}}
+  .flash{animation:flash .55s ease-out}
+  .stat-bar{height:4px;border-radius:4px;background:#e7e5e4;overflow:hidden}
+  .stat-bar > div{height:100%;transition:width .7s ease}
+  .rec-active{animation:recPulse 1.6s infinite}
+  @keyframes recPulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.28)}70%{box-shadow:0 0 0 12px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
   .thin-scroll::-webkit-scrollbar{width:8px;height:8px}
-  .thin-scroll::-webkit-scrollbar-track{background:transparent}
-  .thin-scroll::-webkit-scrollbar-thumb{background:rgba(100,116,139,.35);border-radius:8px}
-  .thin-scroll::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.55)}
-  /* data table */
-  .rtable thead th{
-    position:sticky;top:0;z-index:10;
-    background:#f1f5f9;
-    border-bottom:1px solid #cbd5e1;
-  }
-  .rtable tbody tr{border-bottom:1px solid #eef2f7;transition:background .15s}
-  .rtable tbody tr:hover{background:#f0f9ff}
-  .row-new{animation:rowIn .6s ease-out}
-  @keyframes rowIn{from{background:rgba(8,145,178,.10)}to{background:transparent}}
-  .rec-active{box-shadow:0 0 0 0 rgba(220,38,38,.3);animation:recPulse 1.6s infinite}
-  @keyframes recPulse{70%{box-shadow:0 0 0 14px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+  .thin-scroll::-webkit-scrollbar-thumb{background:#d6d3d1;border-radius:8px}
+  .thin-scroll::-webkit-scrollbar-thumb:hover{background:#a8a29e}
+  .rtable thead th{position:sticky;top:0;z-index:10;background:#fafaf9;border-bottom:2px solid var(--rule);font-family:'Inter';font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#44403c}
+  .rtable tbody tr{border-bottom:1px solid #f0efec}
+  .rtable tbody tr:hover{background:#f5f5f4}
+  .row-new{animation:rowIn .55s ease-out}
+  @keyframes rowIn{from{background:#eff6ff}to{background:transparent}}
   select{appearance:none;-webkit-appearance:none}
-  .stat-bar{height:4px;border-radius:3px;background:#e2e8f0;overflow:hidden}
-  .stat-bar > div{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
-
-  /* ═══ PAPER — document sheet ═══ */
-  .sheet{
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    border-radius:22px;
-    box-shadow:0 24px 60px -24px rgba(15,23,42,.18), 0 2px 6px rgba(15,23,42,.05);
-  }
-  .paper-body{
-    font-family:'Newsreader',Georgia,'Times New Roman',serif;
-    font-size:1.16rem;line-height:1.82;
-    color:var(--body);
-    font-weight:460;
-  }
-  .paper-body p{margin-bottom:1.15rem}
-  .paper-lede{font-size:1.34rem;line-height:1.72;color:var(--ink);font-weight:400}
-  .paper-h2{font-family:'Space Grotesk';font-weight:700;font-size:clamp(1.5rem,3vw,1.85rem);letter-spacing:-.015em;color:var(--ink);display:flex;align-items:baseline;gap:.9rem;margin-bottom:1.4rem;padding-bottom:.7rem;border-bottom:1px solid #e8edf3}
-  .paper-num{font-family:'JetBrains Mono';font-weight:600;font-size:.78rem;letter-spacing:.22em;color:#0e7490;white-space:nowrap}
-  .paper-h3{font-family:'Space Grotesk';font-weight:700;font-size:1.12rem;color:var(--ink);margin:2rem 0 .7rem}
-  .dropcap::first-letter{font-family:'Space Grotesk';font-weight:700;font-size:3.3em;float:left;line-height:.8;margin:.04em .14em 0 0;color:var(--ink)}
-  .paper-body sup{font-family:'JetBrains Mono';font-size:.66em;font-weight:600;color:#0e7490;letter-spacing:.02em}
-  .paper-body strong{color:var(--ink);font-weight:700}
-  .paper-body em{color:var(--ink)}
-  .pq{font-size:1.32rem;line-height:1.6;font-weight:400;font-style:italic;color:#0f172a;border-left:3px solid #0e7490;padding-left:1.4rem;margin:2.2rem 0}
-  .pq cite{display:block;font-family:'JetBrains Mono';font-style:normal;font-size:11px;letter-spacing:.16em;color:#52606f;margin-top:1rem}
-  .pfig{border:1px solid var(--line);border-radius:1rem;padding:1.3rem 1.4rem;margin:1.8rem 0;background:#f8fafc}
-  .pfig figcaption{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.12em;color:#52606f;font-weight:500}
-  .ptable{width:100%;border-collapse:collapse;margin-top:.8rem;background:#fff;border:1px solid #e8edf3;border-radius:.6rem;overflow:hidden}
-  .ptable th{font-family:'JetBrains Mono';font-weight:600;font-size:11px;letter-spacing:.1em;color:#475569;background:#f1f5f9;text-align:left;padding:.7rem .95rem;border-bottom:1px solid #cbd5e1}
-  .ptable td{font-family:'Space Grotesk';font-size:.92rem;padding:.7rem .95rem;border-bottom:1px solid #eef2f7;color:#253247}
-  .ptable tr:last-child td{border-bottom:none}
-  .ptable .mono-sm{font-family:'JetBrains Mono';font-size:.84rem;color:#0b1220;font-weight:500}
-  .ref-list{list-style:none}
-  .ref-list li{margin-bottom:.85rem;padding-left:1.7rem;text-indent:-1.7rem;font-size:.95rem;line-height:1.65;color:#39485c}
-  .ref-list li b{color:#0b1220;font-weight:600}
-  .ref-list li i{color:#253247}
-  .spy-link{display:block;font-family:'Space Grotesk';font-size:12.5px;font-weight:500;color:#64748b;padding:.42rem 0 .42rem .9rem;border-left:2px solid #e2e8f0;transition:all .2s}
-  .spy-link:hover{color:#0f172a}
-  .spy-on{color:#0e7490 !important;border-left-color:#0e7490 !important;font-weight:700}
-  .abs-box{border:1px solid #99e9e0;background:#f6fdfc}
-  .chip{font-family:'JetBrains Mono';font-size:11.5px;padding:.3rem .8rem;border-radius:9999px;border:1px solid #dbe2ea;background:#fff;color:#475569}
-  ::selection{background:rgba(8,145,178,.18)}
+  ::selection{background:rgba(30,64,175,.15)}
 </style>
 </head>
 <body class="min-h-screen">
-<div class="bg-scene"></div>
-<div class="bg-grid"></div>
 
-<!-- ══════════ NAV ══════════ -->
-<header class="sticky top-0 z-50 border-b border-[#dde3ec] bg-white/92 backdrop-blur-xl">
-  <div class="max-w-[1440px] mx-auto px-5 lg:px-8 h-16 flex items-center gap-6">
+<!-- ══════════ TOP BAR ══════════ -->
+<header class="sticky top-0 z-50 bg-[#f8f6f2]/95 backdrop-blur border-b border-[#e3e0da]">
+  <div class="max-w-[1200px] mx-auto px-5 lg:px-8 h-14 flex items-center gap-6">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl grid place-items-center bg-gradient-to-br from-cyan-600 to-violet-600 shadow">
-        <i data-lucide="radar" class="w-4.5 h-4.5 text-white"></i>
-      </div>
-      <div class="leading-none">
-        <div class="font-bold tracking-[0.2em] text-sm text-slate-900">SENTINEL</div>
-        <div class="mono text-[10px] text-slate-500 tracking-[0.14em] mt-1">ESG CASE STUDY · TELEMETRY</div>
+      <!-- site logo · swap src to images/logo.png to use your own mark -->
+      <img src="https://images.pexels.com/photos/25537595/pexels-photo-25537595.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=120&w=120"
+           alt="Case study logo" class="w-9 h-9 rounded-md object-cover border border-stone-300 shadow-sm">
+      <div class="ui leading-none">
+        <div class="text-[13px] font-bold tracking-[0.14em] text-stone-900 uppercase">A. Ullah</div>
+        <div class="text-[9.5px] font-medium tracking-[0.14em] text-stone-500 uppercase mt-0.5">Case Study · 2026</div>
       </div>
     </div>
-
-    <nav class="hidden md:flex items-center gap-1 ml-6 h-16">
-      <button data-view="paper" class="tab-btn active h-16 px-4 text-[13.5px] font-medium tracking-wide text-slate-500 hover:text-slate-900 flex items-center gap-2">
-        <i data-lucide="scroll-text" class="w-4 h-4"></i> Case Study
-      </button>
-      <button data-view="live" class="tab-btn h-16 px-4 text-[13.5px] font-medium tracking-wide text-slate-500 hover:text-slate-900 flex items-center gap-2">
-        <i data-lucide="activity" class="w-4 h-4"></i> Live Monitor
-      </button>
-      <button data-view="test" class="tab-btn h-16 px-4 text-[13.5px] font-medium tracking-wide text-slate-500 hover:text-slate-900 flex items-center gap-2">
-        <i data-lucide="flask-conical" class="w-4 h-4"></i> Test Dashboard
-        <span id="navSampleBadge" class="mono text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700">0</span>
-      </button>
+    <nav class="flex items-center gap-5 ml-auto h-14">
+      <button data-view="paper" class="tab-btn active h-14">Case Study</button>
+      <button data-view="live" class="tab-btn h-14">Live Dashboard</button>
+      <button data-view="test" class="tab-btn h-14">Test Dashboard <span id="navSampleBadge" class="mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 normal-case tracking-normal">0</span></button>
     </nav>
-
-    <div class="ml-auto flex items-center gap-4">
-      <div id="navRecPill" class="hidden items-center gap-2 px-3 py-1.5 rounded-full border border-red-300 bg-red-50">
-        <span class="pip pip-rec"></span>
-        <span class="mono text-[11px] font-semibold text-red-700">REC <span id="navRecCount">0</span></span>
-      </div>
-      <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass">
-        <span class="pip pip-ok" id="streamPip"></span>
-        <span class="mono text-[11px] font-medium text-slate-600" id="streamLabel">STREAM LIVE</span>
+    <div class="hidden md:flex items-center gap-3">
+      <div id="navRecPill" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full border border-red-300 bg-red-50">
+        <span class="pip pip-rec"></span><span class="ui text-[10.5px] font-bold text-red-700">REC <span id="navRecCount">0</span></span>
       </div>
       <div class="mono text-right leading-none">
-        <div class="text-sm font-semibold text-slate-800" id="clock">--:--:--</div>
-        <div class="text-[10px] font-medium text-slate-500 mt-1" id="dateLine">—</div>
+        <div class="text-[13px] font-semibold text-stone-800" id="clock">--:--:--</div>
+        <div class="text-[9.5px] font-medium text-stone-500 mt-1" id="dateLine">—</div>
       </div>
     </div>
   </div>
 </header>
+<div id="progressBar" class="fixed top-0 left-0 h-[2px] z-[60] w-0 bg-stone-900"></div>
 
-<div id="progressBar" class="fixed top-0 left-0 h-[3px] z-[60] w-0 bg-gradient-to-r from-cyan-600 via-sky-600 to-violet-600"></div>
+<main class="pb-16">
 
-<main class="max-w-[1440px] mx-auto px-5 lg:px-8 pb-20">
-
-  <!-- ══════════ VIEW : CASE STUDY PAPER ══════════ -->
+  <!-- ══════════════ PAGE 1 · THE PAPER ══════════════ -->
   <section id="view-paper" class="view">
-    <div class="pt-10 lg:flex lg:gap-10 xl:gap-14">
+    <div class="max-w-[820px] mx-auto px-5 sm:px-8">
 
-      <!-- table of contents -->
-      <aside class="hidden lg:block w-52 shrink-0">
-        <div class="sticky top-28">
-          <div class="mono text-[10.5px] font-semibold tracking-[0.18em] text-slate-500 mb-4">CONTENTS</div>
-          <nav>
-            <a href="#s-abstract" class="spy-link">Abstract</a>
-            <a href="#s1" class="spy-link">01 · Introduction</a>
-            <a href="#s2" class="spy-link">02 · Literature Review</a>
-            <a href="#s3" class="spy-link">03 · Methodology</a>
-            <a href="#s4" class="spy-link">04 · Case Context</a>
-            <a href="#s5" class="spy-link">05 · Digital Transformation</a>
-            <a href="#s6" class="spy-link">06 · ESG Implementation</a>
-            <a href="#s7" class="spy-link">07 · Performance Outcomes</a>
-            <a href="#s8" class="spy-link">08 · Discussion</a>
-            <a href="#s9" class="spy-link">09 · Challenges</a>
-            <a href="#s10" class="spy-link">10 · Recommendations</a>
-            <a href="#s11" class="spy-link">11 · Conclusion</a>
-            <a href="#s-refs" class="spy-link">References</a>
-          </nav>
-          <div class="mt-8 pt-6 border-t border-slate-200">
-            <div class="mono text-[10.5px] font-semibold tracking-[0.18em] text-slate-500 mb-3">EVIDENCE RIG</div>
-            <button class="js-goto w-full text-left text-[12.5px] font-semibold text-cyan-700 hover:text-cyan-600 transition-colors py-1" data-v="live">→ Live Dashboard</button>
-            <button class="js-goto w-full text-left text-[12.5px] font-semibold text-violet-700 hover:text-violet-600 transition-colors py-1" data-v="test">→ Test Dashboard</button>
-          </div>
+      <!-- journal masthead -->
+      <header class="pt-10 pb-8 rule-top border-t-[3px]">
+        <div class="flex items-baseline justify-between pt-3 pb-6 border-b border-stone-900">
+          <span class="sc">University of Salento</span>
+          <span class="sc">Research Manuscript</span>
         </div>
-      </aside>
 
-      <!-- ═══ DOCUMENT SHEET ═══ -->
-      <div class="sheet flex-1 min-w-0 max-w-[940px]">
-        <article class="paper-body px-6 py-9 md:px-12 md:py-13 lg:px-14">
+        <h1 class="text-center font-semibold text-stone-900 leading-[1.18] text-[clamp(1.65rem,4.2vw,2.5rem)] mt-10 mb-6">
+          A Case Study on Improving Sustainable Strategies and&nbsp;Performance Through Implementation of Digital Transformation and&nbsp;ESG in&nbsp;Schneider&nbsp;Electric
+        </h1>
 
-        <!-- title block -->
-        <header class="mb-12">
-          <div class="mono text-[11px] font-semibold tracking-[0.2em] text-teal-700 mb-5 flex items-center gap-3">
-            <span class="w-10 h-px bg-teal-700/60"></span> CASE STUDY · ESG &amp; DIGITAL TRANSFORMATION RESEARCH
-          </div>
-          <h1 class="font-['Space_Grotesk'] font-bold tracking-tight leading-[1.06] text-[clamp(1.9rem,4.6vw,3.3rem)] text-slate-900">
-            A Case Study on Improving Sustainable Strategies and Performance Through Implementation of <span class="bg-gradient-to-r from-teal-700 via-cyan-700 to-violet-700 bg-clip-text text-transparent">Digital Transformation and ESG</span> in Schneider Electric
-          </h1>
-          <div class="mono text-[11px] font-medium tracking-[0.1em] text-slate-500 mt-6 flex flex-wrap gap-x-6 gap-y-2">
-            <span>METHOD: QUALITATIVE CASE STUDY</span><span>INDUSTRY: ENERGY MANAGEMENT &amp; AUTOMATION</span><span>PERIOD: 2005 – 2025</span>
-          </div>
+        <!-- author portrait · place your photo at images/author.jpg and it appears automatically -->
+        <div class="relative w-24 h-24 mx-auto mt-4 rounded-full border-2 border-stone-900 shadow-md overflow-hidden bg-stone-900 grid place-items-center">
+          <span class="font-['Inter'] font-bold text-2xl tracking-widest text-white select-none">AU</span>
+          <img src="images/author.jpg" alt="Portrait of Ahtisham Ullah"
+               class="absolute inset-0 w-full h-full object-cover"
+               onerror="this.remove()">
+        </div>
+        <div class="text-center text-[1.1rem] mt-3 text-stone-800">
+          <span class="font-semibold tracking-wide">Ahtisham Ullah</span>
+        </div>
+        <div class="text-center italic text-[1rem] text-stone-600 mt-1">
+          University of Salento (Università del Salento), Lecce, Italy
+        </div>
 
-          <!-- ═══ AUTHOR BLOCK ═══ -->
-          <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 md:p-6 flex flex-wrap items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl grid place-items-center font-['Space_Grotesk'] font-bold text-lg text-white bg-gradient-to-br from-cyan-600 to-violet-600 shadow shrink-0">AU</div>
-            <div class="min-w-[220px]">
-              <div class="mono text-[10px] font-semibold tracking-[0.2em] text-slate-500 mb-1">AUTHOR</div>
-              <div class="font-['Space_Grotesk'] font-bold text-xl text-slate-900 leading-tight">Ahtisham Ullah</div>
-              <div class="text-[12.5px] font-medium text-slate-600 mt-1 flex items-center gap-1.5">
-                <i data-lucide="graduation-cap" class="w-4 h-4 text-slate-500"></i>
-                University of Salento (Università del Salento) · Lecce, Italy
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-2.5 ml-auto">
-              <a href="mailto:ahtisham.ullah@studenti.unisalento.it" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-cyan-600 hover:bg-cyan-50 transition-all group shadow-sm">
-                <i data-lucide="mail" class="w-4 h-4 text-cyan-700"></i>
-                <span class="mono text-[12px] font-medium text-slate-700 group-hover:text-cyan-800">ahtisham.ullah@studenti.unisalento.it</span>
-              </a>
-              <a href="https://www.linkedin.com/in/ahtisham-ullah-2763b2188/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-[#0a66c2]/60 hover:bg-[#0a66c2]/5 transition-all group shadow-sm">
-                <i data-lucide="linkedin" class="w-4 h-4 text-[#0a66c2]"></i>
-                <span class="mono text-[12px] font-medium text-slate-700 group-hover:text-[#0a66c2]">LinkedIn Profile</span>
-                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 group-hover:text-[#0a66c2]"></i>
-              </a>
-            </div>
+        <!-- contact brand icons -->
+        <div class="flex items-center justify-center gap-4 mt-6">
+          <a href="mailto:ahtisham.ullah@studenti.unisalento.it" class="cbtn" aria-label="Send email">
+            <span class="tip">ahtisham.ullah@studenti.unisalento.it</span>
+            <!-- Gmail brand mark -->
+            <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+              <path fill="#4285F4" d="M2.3 5.6v11.9a1.6 1.6 0 0 0 1.6 1.6h1.7V8.6L2.3 5.6z"/>
+              <path fill="#34A853" d="M18.4 8.6v10.5h1.7a1.6 1.6 0 0 0 1.6-1.6V5.6l-3.3 3z"/>
+              <path fill="#EA4335" d="M2.3 5.6l9.7 7.3V9.6L5.4 4.6C4.1 3.7 2.3 4.5 2.3 5.6z"/>
+              <path fill="#FBBC04" d="M21.7 5.6l-9.7 7.3V9.6l6.5-5c1.3-.9 3.2-.1 3.2 1z"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/in/ahtisham-ullah-2763b2188/" target="_blank" rel="noopener noreferrer" class="cbtn" aria-label="LinkedIn profile">
+            <span class="tip">linkedin.com/in/ahtisham-ullah</span>
+            <!-- LinkedIn brand mark -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="3" fill="#0A66C2"/>
+              <path fill="#ffffff" d="M8.1 9.4H5.7v8.9h2.4V9.4zM6.9 8.2a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8zm4.1 1.2h2.3v1.2h.03c.32-.6 1.1-1.25 2.27-1.25 2.43 0 2.88 1.6 2.88 3.67v5.2h-2.4v-4.6c0-1.1-.02-2.52-1.53-2.52-1.54 0-1.77 1.2-1.77 2.44v4.68H11V9.4z"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="flex items-baseline justify-between mt-8 pt-3 border-t border-stone-900">
+          <span class="sc">Period: 2005 – 2025</span>
+          <span class="sc">Method: Qualitative Single Case</span>
+        </div>
+
+        <!-- Plate 1 · cover photograph -->
+        <figure class="mt-9">
+          <div class="overflow-hidden rounded-lg border border-stone-300 shadow-sm group">
+            <img src="https://images.pexels.com/photos/25537595/pexels-photo-25537595.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
+                 alt="A wide view of an industrial electrical substation with power lines and towers outdoors"
+                 loading="lazy"
+                 class="w-full h-[220px] sm:h-[300px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                 style="filter:sepia(.18) saturate(.88) contrast(.98)">
           </div>
-        </header>
+          <figcaption class="tabcap !text-left mt-2.5"><b>Plate 1.</b>&ensp;High-voltage electrical infrastructure — the transmission and distribution domain at the core of Schneider Electric's energy-management portfolio. <span class="text-stone-500">Photo: <a href="https://www.pexels.com/@moklebust" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-stone-800">Kris Møklebust / Pexels</a></span></figcaption>
+        </figure>
+      </header>
+
+      <article class="paper-body">
 
         <!-- abstract -->
-        <section id="s-abstract" data-spy>
-          <div class="abs-box rounded-2xl p-7 md:p-9 mb-10">
-            <div class="mono text-[11px] font-bold tracking-[0.2em] text-teal-800 mb-4 flex items-center gap-2">
-              <i data-lucide="align-left" class="w-4 h-4"></i> ABSTRACT
-            </div>
-            <p class="!mb-0 text-[1.06rem] leading-[1.82] text-slate-700">
-              This case study investigates how Schneider Electric SE improved its sustainable strategies and corporate
-              performance through the joint implementation of digital transformation and environmental, social and
-              governance (ESG) programmes between 2005 and 2025. Using a qualitative single-case design built on annual
-              reports, Schneider Sustainability Impact (SSI) disclosures, third-party ESG ratings and academic
-              literature, the study traces the company's evolution from an early adopter of sustainability reporting to
-              the only enterprise ever ranked first twice on the Corporate Knights Global 100 index (2021 and 2025).
-              The analysis shows how the EcoStruxure Internet-of-Things architecture, industrial software, digital
-              twins and lighthouse smart factories were deliberately coupled with a measurable ESG scorecard, linking
-              executive pay and €2.7&nbsp;billion of bank financing to sustainability outcomes. Findings indicate a
-              measurable decoupling of commercial growth from environmental impact: record revenue of €38.2&nbsp;billion
-              in 2024 alongside an SSI score of 7.55/10, MSCI AAA status and industry-leading Sustainalytics placement.
-              The study concludes that digital transformation functions as the measurement-and-optimisation engine of
-              credible ESG strategy, and proposes a transferable sequence — instrument, integrate, incentivise,
-              monetise — for incumbents pursuing sustainable performance.
-            </p>
-          </div>
-          <div class="flex flex-wrap items-center gap-2 mb-12">
-            <span class="mono text-[11px] font-bold tracking-[0.15em] text-slate-600 mr-2">KEYWORDS</span>
-            <span class="chip">Digital transformation</span>
-            <span class="chip">ESG integration</span>
-            <span class="chip">Energy management</span>
-            <span class="chip">EcoStruxure</span>
-            <span class="chip">Corporate sustainability</span>
-            <span class="chip">Decarbonisation</span>
-          </div>
+        <section id="s-abstract" data-spy class="mt-2">
+          <p>
+            <span class="runin">Abstract.</span>&ensp;<span class="italic">
+            This case study investigates how Schneider Electric SE improved its sustainable strategies and corporate
+            performance through the joint implementation of digital transformation and environmental, social and
+            governance (ESG) programmes between 2005 and 2025. Using a qualitative single-case design built on annual
+            reports, Schneider Sustainability Impact (SSI) disclosures, third-party ESG ratings and academic
+            literature, the study traces the company's evolution from an early adopter of sustainability reporting to
+            the only enterprise ever ranked first twice on the Corporate Knights Global 100 index (2021 and 2025).
+            The analysis shows how the EcoStruxure Internet-of-Things architecture, industrial software, digital
+            twins and lighthouse smart factories were deliberately coupled with a measurable ESG scorecard, linking
+            executive pay and €2.7&nbsp;billion of bank financing to sustainability outcomes. Findings indicate a
+            measurable decoupling of commercial growth from environmental impact: record revenue of €38.2&nbsp;billion
+            in 2024 alongside an SSI score of 7.55/10, MSCI AAA status and industry-leading Sustainalytics placement.
+            The study concludes that digital transformation functions as the measurement-and-optimisation engine of
+            credible ESG strategy, and proposes a transferable sequence — instrument, integrate, incentivise,
+            monetise — for incumbents pursuing sustainable performance.</span>
+          </p>
+          <p class="!mb-0">
+            <span class="runin italic">Keywords:</span>&ensp;digital transformation; ESG integration; energy
+            management; EcoStruxure; corporate sustainability; decarbonisation.
+          </p>
         </section>
 
-        <!-- 01 introduction -->
-        <section id="s1" data-spy class="pt-4">
-          <h2 class="paper-h2"><span class="paper-num">01</span> Introduction</h2>
+        <!-- contents -->
+        <nav class="figbox my-10 ui">
+          <div class="sc text-center !text-stone-800 mb-4">Contents</div>
+          <div class="grid sm:grid-cols-2 gap-x-8 gap-y-1 text-[15px]" style="font-family:'EB Garamond',serif">
+            <a href="#s1" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">1&ensp;Introduction</a>
+            <a href="#s7" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">7&ensp;Performance Outcomes</a>
+            <a href="#s2" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">2&ensp;Literature Review</a>
+            <a href="#s8" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">8&ensp;Discussion</a>
+            <a href="#s3" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">3&ensp;Methodology</a>
+            <a href="#s9" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">9&ensp;Challenges and Limitations</a>
+            <a href="#s4" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">4&ensp;Case Context: Schneider Electric</a>
+            <a href="#s10" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">10&ensp;Recommendations</a>
+            <a href="#s5" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">5&ensp;Digital Transformation Architecture</a>
+            <a href="#s11" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">11&ensp;Conclusion</a>
+            <a href="#s6" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">6&ensp;ESG Implementation</a>
+            <a href="#s-refs" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">References</a>
+          </div>
+        </nav>
+
+        <!-- 1 -->
+        <section id="s1" data-spy>
+          <h2 class="ph2"><span class="n">Section 01</span>Introduction</h2>
           <p class="paper-lede dropcap">
             Few industrial companies carry a two-century manufacturing legacy while simultaneously topping global
-            sustainability league tables. Schneider Electric — founded in 1836 in Le Creusot, France — has done
+            sustainability league tables. Schneider Electric — founded in 1836 in Le&nbsp;Creusot, France — has done
             precisely that, repositioning itself from a steel and armaments manufacturer into the recognised leader in
             the digital transformation of energy management and automation.<sup>[9]</sup>
           </p>
@@ -308,11 +272,9 @@
             first sustainability barometer in 2005 to the close of its 2021–2025 Schneider Sustainability Impact (SSI)
             cycle. The study addresses three research questions:
           </p>
-          <div class="pfig !py-4">
-            <p class="!mb-1 mono text-[12.5px] font-medium text-cyan-900">RQ1 — How has Schneider Electric operationalised digital transformation to advance its ESG objectives?</p>
-            <p class="!mb-1 mono text-[12.5px] font-medium text-cyan-900">RQ2 — To what extent has this integration improved both sustainability and financial performance?</p>
-            <p class="!mb-0 mono text-[12.5px] font-medium text-cyan-900">RQ3 — Which transferable lessons emerge for industrial incumbents pursuing sustainable strategies?</p>
-          </div>
+          <p class="pl-6 !mb-0"><em>RQ1</em>&ensp;How has Schneider Electric operationalised digital transformation to advance its ESG objectives?</p>
+          <p class="pl-6 !mb-0"><em>RQ2</em>&ensp;To what extent has this integration improved both sustainability and financial performance?</p>
+          <p class="pl-6"><em>RQ3</em>&ensp;Which transferable lessons emerge for industrial incumbents pursuing sustainable strategies?</p>
           <p>
             The case matters beyond one firm. Energy management sits at the chokepoint of decarbonisation: buildings,
             data centres, industry and infrastructure all consume the electricity that Schneider's equipment distributes
@@ -321,10 +283,10 @@
           </p>
         </section>
 
-        <!-- 02 literature -->
-        <section id="s2" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">02</span> Literature Review</h2>
-          <h3 class="paper-h3">2.1 — Digital transformation as an operational lever</h3>
+        <!-- 2 -->
+        <section id="s2" data-spy>
+          <h2 class="ph2"><span class="n">Section 02</span>Literature Review</h2>
+          <h3 class="ph3">2.1&ensp;Digital transformation as an operational lever</h3>
           <p>
             Digital transformation is most productively understood not as a technology programme but as a strategy
             programme. Matt, Hess and Benlian<sup>[2]</sup> show that successful firms formulate explicit digital
@@ -334,7 +296,7 @@
             account of the Fourth Industrial Revolution<sup>[4]</sup> frames cyber-physical systems as dissolving the
             boundary between physical operations and data — precisely the dissolution that ESG instrumentation requires.
           </p>
-          <h3 class="paper-h3">2.2 — ESG and corporate performance</h3>
+          <h3 class="ph3">2.2&ensp;ESG and corporate performance</h3>
           <p>
             The financial materiality of ESG is now supported by unusually broad evidence. Friede, Busch and Bassen's<sup>[5]</sup>
             aggregation of more than 2,000 empirical studies finds that roughly 90% report a non-negative relationship
@@ -343,7 +305,7 @@
             both stock-market and accounting terms, establishing that deep — rather than cosmetic — integration drives
             the effect.
           </p>
-          <h3 class="paper-h3">2.3 — The digital–ESG nexus</h3>
+          <h3 class="ph3">2.3&ensp;The digital–ESG nexus</h3>
           <p>
             A newer stream explicitly links the two agendas. George, Merrill and Schillebeeckx<sup>[7]</sup> argue that
             digital technologies condition how firms can pursue sustainability objectives, enabling measurement,
@@ -354,9 +316,9 @@
           </p>
         </section>
 
-        <!-- 03 methodology -->
-        <section id="s3" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">03</span> Methodology</h2>
+        <!-- 3 -->
+        <section id="s3" data-spy>
+          <h2 class="ph2"><span class="n">Section 03</span>Methodology</h2>
           <p>
             The research adopts a qualitative, single instrumental case study following Yin.<sup>[1]</sup> Schneider
             Electric was selected through purposive, criterion sampling: it is an extreme and revelatory case — the only
@@ -379,31 +341,42 @@
           </p>
         </section>
 
-        <!-- 04 case context -->
-        <section id="s4" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">04</span> Case Context: Schneider Electric</h2>
+        <!-- 4 -->
+        <section id="s4" data-spy>
+          <h2 class="ph2"><span class="n">Section 04</span>Case Context: Schneider Electric</h2>
           <p class="dropcap">
             Founded in 1836, Schneider Electric spent its first century in steel, heavy machinery and electrical
-            equipment before decisively pivoting toward electricity management through acquisitions such as Square D,
+            equipment before decisively pivoting toward electricity management through acquisitions such as Square&nbsp;D,
             Merlin Gerin and APC. Today, headquartered in Rueil-Malmaison, France, the group employs more than 150,000
             people across over 100 countries, describing itself as "the most local of global companies".<sup>[9]</sup>
             Its portfolio spans two reporting segments — Energy Management and Industrial Automation — serving homes,
             buildings, data centres, infrastructure and industry.
           </p>
-          <figure class="pfig">
-            <table class="ptable">
-              <thead><tr><th>KEY INDICATOR (FY 2024)</th><th class="!text-right">VALUE</th><th class="!text-right">Δ Y/Y</th></tr></thead>
+
+          <!-- corporate mark exhibit -->
+          <figure class="my-7 flex items-center gap-5 rounded-lg border border-stone-300 bg-white px-6 py-5 shadow-sm">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Schneider_Electric_2007.svg/512px-Schneider_Electric_2007.svg.png"
+                 alt="Schneider Electric logo"
+                 loading="lazy"
+                 class="w-[84px] shrink-0 object-contain"
+                 onerror="this.closest('figure').remove()">
+            <figcaption class="tabcap !text-left !mb-0"><b>Exhibit A.</b>&ensp;The Schneider Electric corporate mark. The group positions itself as the digital partner for sustainability and efficiency, operating in more than 100 countries. <span class="text-stone-500">Image: Wikimedia Commons; trademark of Schneider Electric SE, reproduced here for academic illustration only.</span></figcaption>
+          </figure>
+
+          <figure class="figbox">
+            <div class="tabcap"><b>Table 1.</b>&ensp;Schneider Electric at a glance (FY 2024). Sources: FY 2024 results.<sup>[11][15]</sup></div>
+            <table class="bt">
+              <thead><tr><th>Key indicator</th><th class="!text-right">Value</th><th class="!text-right">Change y/y</th></tr></thead>
               <tbody>
-                <tr><td>Revenue</td><td class="text-right mono-sm">€38.15 bn</td><td class="text-right mono-sm !text-emerald-700">+6.3% (≈+8% organic)</td></tr>
-                <tr><td>· Energy Management segment</td><td class="text-right mono-sm">€31.13 bn</td><td class="text-right mono-sm !text-emerald-700">+12%</td></tr>
-                <tr><td>· Industrial Automation segment</td><td class="text-right mono-sm">€7.02 bn</td><td class="text-right mono-sm !text-red-700">−4%</td></tr>
-                <tr><td>Adjusted EBITA</td><td class="text-right mono-sm">€7.08 bn</td><td class="text-right mono-sm !text-emerald-700">margin 18.6%</td></tr>
-                <tr><td>Net profit</td><td class="text-right mono-sm">€4.27 bn</td><td class="text-right mono-sm !text-emerald-700">+7%</td></tr>
-                <tr><td>Free cash flow</td><td class="text-right mono-sm">€4.2 bn</td><td class="text-right mono-sm !text-emerald-700">record</td></tr>
-                <tr><td>Regional mix · North America share</td><td class="text-right mono-sm">≈36% of revenue</td><td class="text-right mono-sm text-slate-500">—</td></tr>
+                <tr><td>Revenue</td><td class="text-right num">€38.15 bn</td><td class="text-right num">+6.3% (≈+8% organic)</td></tr>
+                <tr><td>· Energy Management segment</td><td class="text-right num">€31.13 bn</td><td class="text-right num">+12%</td></tr>
+                <tr><td>· Industrial Automation segment</td><td class="text-right num">€7.02 bn</td><td class="text-right num">−4%</td></tr>
+                <tr><td>Adjusted EBITA</td><td class="text-right num">€7.08 bn</td><td class="text-right num">margin 18.6%</td></tr>
+                <tr><td>Net profit</td><td class="text-right num">€4.27 bn</td><td class="text-right num">+7%</td></tr>
+                <tr><td>Free cash flow</td><td class="text-right num">€4.2 bn</td><td class="text-right num">record</td></tr>
+                <tr><td>Regional mix · North America share</td><td class="text-right num">≈36% of revenue</td><td class="text-right num">—</td></tr>
               </tbody>
             </table>
-            <figcaption class="mt-4">TABLE 1 — SCHNEIDER ELECTRIC AT A GLANCE. SOURCES: FY 2024 RESULTS.<sup>[11][15]</sup></figcaption>
           </figure>
           <p>
             Strategically, the company frames itself as an "Impact Company": sustainability is positioned not as
@@ -416,14 +389,14 @@
           <blockquote class="pq">
             "There is no magic formula to being repeatedly listed as a most sustainable company, it's about doing well
             and doing good."
-            <cite>— OLIVIER BLUM, THEN CHIEF STRATEGY &amp; SUSTAINABILITY OFFICER<sup>[10]</sup></cite>
+            <cite>— Olivier Blum, then Chief Strategy &amp; Sustainability Officer [10]</cite>
           </blockquote>
         </section>
 
-        <!-- 05 digital transformation -->
-        <section id="s5" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">05</span> Digital Transformation Architecture</h2>
-          <h3 class="paper-h3">5.1 — EcoStruxure: the IoT backbone</h3>
+        <!-- 5 -->
+        <section id="s5" data-spy>
+          <h2 class="ph2"><span class="n">Section 05</span>Digital Transformation Architecture</h2>
+          <h3 class="ph3">5.1&ensp;EcoStruxure: the IoT backbone</h3>
           <p>
             The centrepiece of Schneider's transformation is <em>EcoStruxure</em>, its open, interoperable,
             IoT-enabled architecture, re-architected in 2016 across three layers: <strong>connected products</strong>
@@ -434,7 +407,7 @@
             decarbonisation tooling on itself before monetising it, a practice the company calls being its own first
             customer.
           </p>
-          <h3 class="paper-h3">5.2 — Software scale-up: AVEVA, ETAP and digital twins</h3>
+          <h3 class="ph3">5.2&ensp;Software scale-up: AVEVA, ETAP and digital twins</h3>
           <p>
             The group deepened its software stack through successive investments, culminating in the full acquisition
             of UK industrial software leader AVEVA, completed in January 2023, and of electrical digital-twin specialist
@@ -443,33 +416,46 @@
             plants. Artificial-intelligence capabilities have been progressively embedded, including a dedicated Chief
             AI Officer function and partnerships applying generative AI to resource-optimisation problems.
           </p>
-          <h3 class="paper-h3">5.3 — Smart factories as living laboratories</h3>
+          <h3 class="ph3">5.3&ensp;Smart factories as living laboratories</h3>
           <p>
             Internally, the Smart Factory programme digitised the group's ~200-site manufacturing footprint. Several
-            plants — including Le Vaudreuil (France), Batam (Indonesia) and Hyderabad (India) — have been designated
+            plants — including Le&nbsp;Vaudreuil (France), Batam (Indonesia) and Hyderabad (India) — have been designated
             World Economic Forum Lighthouse factories, while Lexington (USA) and Wuxi (China) counted among the Forum's
             earliest <em>Sustainability Lighthouses</em>, a designation requiring quantified environmental gains from
             Fourth-Industrial-Revolution technologies.<sup>[16]</sup> These sites operationalise the paper's central
             mechanism: continuous telemetry converts sustainability KPIs into variables that engineers can tune daily
             rather than auditors can tally annually.
           </p>
-          <figure class="pfig">
-            <div class="mono text-[11px] font-bold tracking-[0.15em] text-slate-600 mb-3">FIGURE 1 — THE DIGITAL–ESG FLYWHEEL OBSERVED IN THE CASE</div>
-            <div class="flex flex-wrap items-center gap-2 mono text-[11.5px] font-semibold">
-              <span class="px-3.5 py-2 rounded-xl bg-cyan-50 border border-cyan-300 text-cyan-900">1 · INSTRUMENT — IoT sensors per asset</span><span class="text-slate-400">→</span>
-              <span class="px-3.5 py-2 rounded-xl bg-sky-50 border border-sky-300 text-sky-900">2 · MEASURE — edge telemetry in real time</span><span class="text-slate-400">→</span>
-              <span class="px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-300 text-teal-900">3 · OPTIMISE — AI analytics &amp; twins</span><span class="text-slate-400">→</span>
-              <span class="px-3.5 py-2 rounded-xl bg-violet-50 border border-violet-300 text-violet-900">4 · REPORT — audited SSI scorecard</span><span class="text-slate-400">→</span>
-              <span class="px-3.5 py-2 rounded-xl bg-fuchsia-50 border border-fuchsia-300 text-fuchsia-900">5 · INCENTIVISE — pay &amp; finance linkage</span><span class="text-slate-400">→</span>
-              <span class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900">6 · MONETISE — impact revenues ↺</span>
+
+          <!-- Plate 2 · smart factory -->
+          <figure class="my-7">
+            <div class="overflow-hidden rounded-lg border border-stone-300 shadow-sm group">
+              <img src="https://images.pexels.com/photos/34222005/pexels-photo-34222005.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
+                   alt="Industrial machinery with robotic arm in a modern automated manufacturing facility"
+                   loading="lazy"
+                   class="w-full h-[220px] sm:h-[280px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                   style="filter:sepia(.18) saturate(.88) contrast(.98)">
             </div>
-            <figcaption class="mt-4">SYNTHESISED FROM EVIDENCE STREAMS (i)–(iii); EACH STAGE IS DEVELOPED IN SECTIONS 5–7.</figcaption>
+            <figcaption class="tabcap !text-left mt-2.5"><b>Plate 2.</b>&ensp;Automated manufacturing with robotic systems — the smart-factory environment in which EcoStruxure-based continuous telemetry is deployed (see Section 5.3). <span class="text-stone-500">Photo: <a href="https://www.pexels.com/@freek-wolsink-508219" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-stone-800">Freek Wolsink / Pexels</a></span></figcaption>
+          </figure>
+
+          <figure class="figbox">
+            <div class="tabcap"><b>Figure 1.</b>&ensp;The digital–ESG flywheel observed in the case.</div>
+            <ol class="list-decimal pl-6 space-y-1.5 !text-[1.05rem]">
+              <li><strong>Instrument</strong> — IoT sensors on every material asset and energy flow;</li>
+              <li><strong>Measure</strong> — edge telemetry streams variables in real time;</li>
+              <li><strong>Optimise</strong> — AI analytics and digital twins tune operations;</li>
+              <li><strong>Report</strong> — audited SSI scorecard discloses outcomes quarterly;</li>
+              <li><strong>Incentivise</strong> — executive pay and bank pricing linked to the score;</li>
+              <li><strong>Monetise</strong> — impact revenues fund the next cycle of instrumentation.</li>
+            </ol>
+            <div class="figcap">Synthesised from evidence streams (i)–(iii); each stage is developed in Sections 5–7.</div>
           </figure>
         </section>
 
-        <!-- 06 ESG implementation -->
-        <section id="s6" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">06</span> ESG Implementation</h2>
+        <!-- 6 -->
+        <section id="s6" data-spy>
+          <h2 class="ph2"><span class="n">Section 06</span>ESG Implementation</h2>
           <p class="dropcap">
             Schneider's ESG journey long predates the acronym. The company introduced its first sustainability
             barometer in 2005 — among the earliest of any industrial firm — reporting quantified targets on a quarterly
@@ -483,21 +469,21 @@
             commitments are validated against a 1.5°C trajectory: carbon-neutral operations by 2025 and net-zero across
             the entire value chain by 2050.
           </p>
-          <figure class="pfig">
-            <table class="ptable">
-              <thead><tr><th>LONG-TERM COMMITMENT</th><th>REPRESENTATIVE 2025 TARGET</th></tr></thead>
+          <figure class="figbox">
+            <div class="tabcap"><b>Table 2.</b>&ensp;Schneider Sustainability Impact 2021–2025: six commitments and representative targets.<sup>[8][13][14]</sup></div>
+            <table class="bt">
+              <thead><tr><th>Long-term commitment</th><th>Representative 2025 target</th></tr></thead>
               <tbody>
-                <tr><td>1 · Act for a climate-positive world</td><td class="mono-sm">Help customers save/avoid 800M t CO₂ (cum. since 2018); carbon-neutral operations</td></tr>
-                <tr><td>2 · Be efficient with resources</td><td class="mono-sm">50% green material content; packaging free of single-use plastic</td></tr>
-                <tr><td>3 · Live up to principles of trust</td><td class="mono-sm">100% strategic suppliers provide decent work; high confidence to report unethical conduct</td></tr>
-                <tr><td>4 · Create equal opportunities</td><td class="mono-sm">Gender balance 50/40/30 (new hires/frontline/leadership); pay-equity coverage</td></tr>
-                <tr><td>5 · Harness the power of generations</td><td class="mono-sm">X2 opportunities for the next generation (internships, apprenticeships)</td></tr>
-                <tr><td>6 · Empower local communities</td><td class="mono-sm">50M people with access to green electricity; local impact initiatives in 100+ markets</td></tr>
+                <tr><td>1 · Act for a climate-positive world</td><td>Help customers save/avoid 800M t CO₂ (cum. since 2018); carbon-neutral operations</td></tr>
+                <tr><td>2 · Be efficient with resources</td><td>50% green material content; packaging free of single-use plastic</td></tr>
+                <tr><td>3 · Live up to principles of trust</td><td>100% strategic suppliers provide decent work; confidence to report unethical conduct</td></tr>
+                <tr><td>4 · Create equal opportunities</td><td>Gender balance 50/40/30 (hires/frontline/leadership); pay equity</td></tr>
+                <tr><td>5 · Harness the power of generations</td><td>×2 opportunities for the next generation (internships, apprenticeships)</td></tr>
+                <tr><td>6 · Empower local communities</td><td>50M people with access to green electricity; local initiatives in 100+ markets</td></tr>
               </tbody>
             </table>
-            <figcaption class="mt-4">TABLE 2 — SSI 2021–2025: SIX COMMITMENTS AND REPRESENTATIVE TARGETS.<sup>[8][13][14]</sup></figcaption>
           </figure>
-          <h3 class="paper-h3">6.1 — Governance and financial hard-wiring</h3>
+          <h3 class="ph3">6.1&ensp;Governance and financial hard-wiring</h3>
           <p>
             What distinguishes the programme is enforcement architecture. Executive remuneration is explicitly linked
             to SSI performance and ESG ratings, and in 2022 the group signed <strong>€2.7&nbsp;billion of bank
@@ -505,7 +491,7 @@
             narrative into covenant.<sup>[12]</sup> The effect registered externally: Corporate Knights specifically
             cited the pay-for-sustainability linkage in awarding Schneider first place in 2025.<sup>[10]</sup>
           </p>
-          <h3 class="paper-h3">6.2 — Ecosystem programmes</h3>
+          <h3 class="ph3">6.2&ensp;Ecosystem programmes</h3>
           <p>
             Recognising that most of its footprint sits outside its own walls, Schneider launched the <strong>Zero
             Carbon Project</strong> (April 2021) to help its top 1,000 suppliers halve operational emissions by 2025,
@@ -515,10 +501,10 @@
           </p>
         </section>
 
-        <!-- 07 outcomes -->
-        <section id="s7" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">07</span> Performance Outcomes</h2>
-          <h3 class="paper-h3">7.1 — Environmental performance</h3>
+        <!-- 7 -->
+        <section id="s7" data-spy>
+          <h2 class="ph2"><span class="n">Section 07</span>Performance Outcomes</h2>
+          <h3 class="ph3">7.1&ensp;Environmental performance</h3>
           <p>
             The headline environmental result is <em>decoupling</em>: record commercial growth achieved while
             operational emissions fall. On the demand side, EcoStruxure-class solutions helped customers and suppliers
@@ -527,29 +513,42 @@
             assessment specifically credited the company's success in severing energy consumption and carbon emissions
             from business growth.<sup>[10]</sup>
           </p>
-          <h3 class="paper-h3">7.2 — Social performance</h3>
+
+          <!-- Plate 3 · renewables -->
+          <figure class="my-7">
+            <div class="overflow-hidden rounded-lg border border-stone-300 shadow-sm group">
+              <img src="https://images.pexels.com/photos/35105460/pexels-photo-35105460.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
+                   alt="Panoramic aerial view of a renewable energy farm with solar panels and wind turbines at sunset"
+                   loading="lazy"
+                   class="w-full h-[220px] sm:h-[280px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                   style="filter:sepia(.12) saturate(.95) contrast(.98)">
+            </div>
+            <figcaption class="tabcap !text-left mt-2.5"><b>Plate 3.</b>&ensp;Renewable generation at scale — solar and wind assets whose grid integration drives the demand for digital energy-management solutions analysed in this section. <span class="text-stone-500">Photo: <a href="https://www.pexels.com/@quang-nguyen-vinh-222549" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-stone-800">Quang Nguyen Vinh / Pexels</a></span></figcaption>
+          </figure>
+
+          <h3 class="ph3">7.2&ensp;Social performance</h3>
           <p>
             Social indicators advanced in parallel: gender diversity of executives and board — explicitly cited by
             Corporate Knights in the 2025 ranking<sup>[10]</sup> — alongside equal-pay programmes, safety performance,
             and energy-access initiatives moving toward the 50-million-person target. Multi-year engagement scores and
             the confidence-to-report-unethical-conduct index (81%) evidence the trust pillar internally.<sup>[14]</sup>
           </p>
-          <h3 class="paper-h3">7.3 — Governance and external ratings</h3>
-          <figure class="pfig">
-            <table class="ptable">
-              <thead><tr><th>RATING (2024–25)</th><th class="!text-right">SCORE</th><th class="!text-right">STANDING</th></tr></thead>
+          <h3 class="ph3">7.3&ensp;Governance and external ratings</h3>
+          <figure class="figbox">
+            <div class="tabcap"><b>Table 3.</b>&ensp;Third-party ESG ratings snapshot, 2024–25.<sup>[10]</sup></div>
+            <table class="bt">
+              <thead><tr><th>Rating</th><th class="!text-right">Score</th><th class="!text-right">Standing</th></tr></thead>
               <tbody>
-                <tr><td>Corporate Knights Global 100</td><td class="text-right mono-sm">#1 — 2021 &amp; 2025</td><td class="text-right mono-sm !text-teal-800">only company to top it twice; 14 straight years listed</td></tr>
-                <tr><td>S&amp;P Global CSA</td><td class="text-right mono-sm">86 / 100</td><td class="text-right mono-sm !text-teal-800">industry leader; DJSI World 14th consecutive year</td></tr>
-                <tr><td>EcoVadis</td><td class="text-right mono-sm">85 / 100</td><td class="text-right mono-sm !text-teal-800">Platinum — top 1% of ~130,000 assessed</td></tr>
-                <tr><td>MSCI ESG</td><td class="text-right mono-sm">AAA</td><td class="text-right mono-sm !text-teal-800">AAA for 14th year running</td></tr>
-                <tr><td>Sustainalytics</td><td class="text-right mono-sm">Low risk</td><td class="text-right mono-sm !text-teal-800">1st of 301 industry peers</td></tr>
-                <tr><td>Moody's Analytics</td><td class="text-right mono-sm">73 / 100</td><td class="text-right mono-sm !text-teal-800">Euronext Vigeo index family constituent</td></tr>
+                <tr><td>Corporate Knights Global 100</td><td class="text-right num">#1 — 2021 &amp; 2025</td><td class="text-right">only company to top it twice; 14 straight years listed</td></tr>
+                <tr><td>S&amp;P Global CSA</td><td class="text-right num">86 / 100</td><td class="text-right">industry leader; DJSI World 14th consecutive year</td></tr>
+                <tr><td>EcoVadis</td><td class="text-right num">85 / 100</td><td class="text-right">Platinum — top 1% of ~130,000 assessed</td></tr>
+                <tr><td>MSCI ESG</td><td class="text-right num">AAA</td><td class="text-right">AAA for 14th year running</td></tr>
+                <tr><td>Sustainalytics</td><td class="text-right num">Low risk</td><td class="text-right">1st of 301 industry peers</td></tr>
+                <tr><td>Moody's Analytics</td><td class="text-right num">73 / 100</td><td class="text-right">Euronext Vigeo index family constituent</td></tr>
               </tbody>
             </table>
-            <figcaption class="mt-4">TABLE 3 — THIRD-PARTY ESG RATINGS SNAPSHOT.<sup>[10]</sup></figcaption>
           </figure>
-          <h3 class="paper-h3">7.4 — Financial performance</h3>
+          <h3 class="ph3">7.4&ensp;Financial performance</h3>
           <p>
             Critically for RQ2, ESG leadership coincided with — rather than traded off against — financial outperformance.
             FY 2024 set company records: €38.2&nbsp;billion revenue (≈+8% organic), €7.1&nbsp;billion adjusted EBITA at an
@@ -557,20 +556,20 @@
             continued double-digit earnings growth.<sup>[11][15]</sup> The internal SSI score reached
             <strong>7.55/10</strong> in 2024, ahead of plan on the path to its 2025 endpoint.<sup>[11]</sup>
           </p>
-          <figure class="pfig">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div><div class="mono text-[1.7rem] font-bold text-teal-800">€38.2bn</div><div class="mono text-[10.5px] font-semibold tracking-[0.12em] text-slate-600 mt-2">FY24 REVENUE · RECORD</div></div>
-              <div><div class="mono text-[1.7rem] font-bold text-cyan-800">7.55<span class="text-base text-slate-500">/10</span></div><div class="mono text-[10.5px] font-semibold tracking-[0.12em] text-slate-600 mt-2">SSI SCORE 2024</div></div>
-              <div><div class="mono text-[1.7rem] font-bold text-violet-800">2×</div><div class="mono text-[10.5px] font-semibold tracking-[0.12em] text-slate-600 mt-2">GLOBAL 100 #1 · 2021 &amp; 2025</div></div>
-              <div><div class="mono text-[1.7rem] font-bold text-emerald-800">381Mt</div><div class="mono text-[10.5px] font-semibold tracking-[0.12em] text-slate-600 mt-2">CUSTOMER CO₂ SAVED '18–'21</div></div>
+          <figure class="figbox">
+            <div class="tabcap"><b>Figure 2.</b>&ensp;Headline outcomes of the integrated strategy.<sup>[10][11][13][14]</sup></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-y-6 text-center pt-1">
+              <div><div class="mono text-[1.55rem] font-bold text-stone-900">€38.2bn</div><div class="sc mt-1.5">FY24 revenue · record</div></div>
+              <div><div class="mono text-[1.55rem] font-bold text-stone-900">7.55<span class="text-sm text-stone-500">/10</span></div><div class="sc mt-1.5">SSI score 2024</div></div>
+              <div><div class="mono text-[1.55rem] font-bold text-stone-900">2×</div><div class="sc mt-1.5">Global 100 #1 · 2021 &amp; 2025</div></div>
+              <div><div class="mono text-[1.55rem] font-bold text-stone-900">381Mt</div><div class="sc mt-1.5">CO₂ saved/avoided '18–'21</div></div>
             </div>
-            <figcaption class="mt-5">FIGURE 2 — HEADLINE OUTCOMES OF THE INTEGRATED STRATEGY.<sup>[10][11][13][14]</sup></figcaption>
           </figure>
         </section>
 
-        <!-- 08 discussion -->
-        <section id="s8" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">08</span> Discussion</h2>
+        <!-- 8 -->
+        <section id="s8" data-spy>
+          <h2 class="ph2"><span class="n">Section 08</span>Discussion</h2>
           <p>
             Answering RQ1, the case shows digital transformation operationalised as an <em>instrumentation layer</em>:
             EcoStruxure sensing, edge control and cloud analytics make ESG variables continuously visible, while digital
@@ -594,9 +593,9 @@
           </p>
         </section>
 
-        <!-- 09 challenges -->
-        <section id="s9" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">09</span> Challenges and Limitations</h2>
+        <!-- 9 -->
+        <section id="s9" data-spy>
+          <h2 class="ph2"><span class="n">Section 09</span>Challenges and Limitations</h2>
           <p>
             The case is not frictionless. Industrial Automation contracted 4% in 2024 even as Energy Management grew
             12%, illustrating cycle exposure across segments;<sup>[11]</sup> Scope&nbsp;3 supplier decarbonisation
@@ -607,9 +606,9 @@
           </p>
         </section>
 
-        <!-- 10 recommendations -->
-        <section id="s10" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">10</span> Recommendations</h2>
+        <!-- 10 -->
+        <section id="s10" data-spy>
+          <h2 class="ph2"><span class="n">Section 10</span>Recommendations</h2>
           <p>
             For RQ3, the transferable sequence for incumbents is: <strong>(1) Instrument</strong> — sensorise material
             ESG flows before setting targets; <strong>(2) Integrate</strong> — publish one quantified scorecard on a
@@ -622,9 +621,9 @@
           </p>
         </section>
 
-        <!-- 11 conclusion -->
-        <section id="s11" data-spy class="pt-12">
-          <h2 class="paper-h2"><span class="paper-num">11</span> Conclusion</h2>
+        <!-- 11 -->
+        <section id="s11" data-spy>
+          <h2 class="ph2"><span class="n">Section 11</span>Conclusion</h2>
           <p>
             Schneider Electric's two-decade trajectory demonstrates that digital transformation and ESG are not parallel
             programmes but a single reinforcing system. Digital infrastructure supplied the measurement, optimisation
@@ -637,288 +636,265 @@
         </section>
 
         <!-- references -->
-        <section id="s-refs" data-spy class="pt-14">
-          <h2 class="paper-h2"><span class="paper-num">§</span> References</h2>
-          <ol class="ref-list mono">
-            <li>[1] <b>Yin, R.K.</b> (2018) <i>Case Study Research and Applications: Design and Methods.</i> 6th edn. Thousand Oaks, CA: SAGE.</li>
-            <li>[2] <b>Matt, C., Hess, T. &amp; Benlian, A.</b> (2015) 'Digital transformation strategies', <i>Business &amp; Information Systems Engineering</i>, 57(5), pp. 339–343.</li>
-            <li>[3] <b>Kane, G.C., Palmer, D., Phillips, A.N., Kiron, D. &amp; Buckley, N.</b> (2015) <i>Strategy, not technology, drives digital transformation.</i> MIT Sloan Management Review / Deloitte University Press.</li>
-            <li>[4] <b>Schwab, K.</b> (2016) <i>The Fourth Industrial Revolution.</i> Geneva: World Economic Forum.</li>
-            <li>[5] <b>Friede, G., Busch, T. &amp; Bassen, A.</b> (2015) 'ESG and financial performance: aggregated evidence from more than 2000 empirical studies', <i>Journal of Sustainable Finance &amp; Investment</i>, 5(4), pp. 210–233.</li>
-            <li>[6] <b>Eccles, R.G., Ioannou, I. &amp; Serafeim, G.</b> (2014) 'The impact of corporate sustainability on organizational processes and performance', <i>Management Science</i>, 60(11), pp. 2835–2857.</li>
-            <li>[7] <b>George, G., Merrill, R.K. &amp; Schillebeeckx, S.J.D.</b> (2021) 'Digital sustainability and entrepreneurship', <i>Organization &amp; Environment</i>, 34(3), pp. 359–378.</li>
-            <li>[8] <b>Schneider Electric</b> (2021) <i>Accelerating sustainability: Schneider Sustainability Impact 2021–2025.</i> Announcement, 25 January 2021. Rueil-Malmaison.</li>
-            <li>[9] <b>Corporate Knights / Newswire</b> (2021) 'Schneider Electric ranked world's most sustainable corporation by Corporate Knights' — 2021 Global 100 (8,080 companies assessed), 25 January 2021.</li>
-            <li>[10] <b>Schneider Electric</b> (2025) <i>Schneider Electric named the World's Most Sustainable Corporation for a second time.</i> Press release, 22 January 2025, incl. 2024 external ESG ratings table.</li>
-            <li>[11] <b>Schneider Electric</b> (2025) <i>Full-Year 2024 Financial Results &amp; Consolidated Financial Statements.</i> Rueil-Malmaison: Schneider Electric SE. (Revenue €38,153M; adj. EBITA €7,083M; SSI 7.55/10.)</li>
-            <li>[12] <b>Schneider Electric / Business Wire</b> (2022) 'Schneider Electric makes steady progress toward 2025 sustainability targets', 28 July 2022 (€2.7&nbsp;bn SSI-indexed facilities).</li>
-            <li>[13] <b>WBR Field Service</b> (2024) 'Here's how Schneider Electric became number one for sustainability' — Zero Carbon Project (2021), Energize programme (2021), 381M t CO₂ saved/avoided 2018–2021.</li>
-            <li>[14] <b>Schneider Electric</b> (2024) <i>Schneider Sustainability Impact — Q1/Q4 2024 results scorecards.</i></li>
-            <li>[15] <b>Energynews.pro</b> (2025) 'Schneider Electric posts record profits in 2024 driven by energy transition and data centres', 21 February 2025.</li>
-            <li>[16] <b>World Economic Forum</b> (2023) <i>Global Lighthouse Network: Shaping the next chapter of the Fourth Industrial Revolution</i> — incl. Sustainability Lighthouse designations (Lexington, US; Wuxi, China).</li>
+        <section id="s-refs" data-spy>
+          <h2 class="ph2"><span class="n">Bibliography</span>References</h2>
+          <ol class="refs">
+            <li>[1]&ensp;<b>Yin, R.K.</b> (2018) <i>Case Study Research and Applications: Design and Methods.</i> 6th edn. Thousand Oaks, CA: SAGE.</li>
+            <li>[2]&ensp;<b>Matt, C., Hess, T. &amp; Benlian, A.</b> (2015) 'Digital transformation strategies', <i>Business &amp; Information Systems Engineering</i>, 57(5), pp. 339–343.</li>
+            <li>[3]&ensp;<b>Kane, G.C., Palmer, D., Phillips, A.N., Kiron, D. &amp; Buckley, N.</b> (2015) <i>Strategy, not technology, drives digital transformation.</i> MIT Sloan Management Review / Deloitte University Press.</li>
+            <li>[4]&ensp;<b>Schwab, K.</b> (2016) <i>The Fourth Industrial Revolution.</i> Geneva: World Economic Forum.</li>
+            <li>[5]&ensp;<b>Friede, G., Busch, T. &amp; Bassen, A.</b> (2015) 'ESG and financial performance: aggregated evidence from more than 2000 empirical studies', <i>Journal of Sustainable Finance &amp; Investment</i>, 5(4), pp. 210–233.</li>
+            <li>[6]&ensp;<b>Eccles, R.G., Ioannou, I. &amp; Serafeim, G.</b> (2014) 'The impact of corporate sustainability on organizational processes and performance', <i>Management Science</i>, 60(11), pp. 2835–2857.</li>
+            <li>[7]&ensp;<b>George, G., Merrill, R.K. &amp; Schillebeeckx, S.J.D.</b> (2021) 'Digital sustainability and entrepreneurship', <i>Organization &amp; Environment</i>, 34(3), pp. 359–378.</li>
+            <li>[8]&ensp;<b>Schneider Electric</b> (2021) <i>Accelerating sustainability: Schneider Sustainability Impact 2021–2025.</i> Announcement, 25 January 2021. Rueil-Malmaison.</li>
+            <li>[9]&ensp;<b>Corporate Knights / Newswire</b> (2021) 'Schneider Electric ranked world's most sustainable corporation by Corporate Knights' — 2021 Global 100 (8,080 companies assessed), 25 January 2021.</li>
+            <li>[10]&ensp;<b>Schneider Electric</b> (2025) <i>Schneider Electric named the World's Most Sustainable Corporation for a second time.</i> Press release, 22 January 2025, incl. 2024 external ESG ratings table.</li>
+            <li>[11]&ensp;<b>Schneider Electric</b> (2025) <i>Full-Year 2024 Financial Results &amp; Consolidated Financial Statements.</i> Rueil-Malmaison: Schneider Electric SE. (Revenue €38,153M; adj. EBITA €7,083M; SSI 7.55/10.)</li>
+            <li>[12]&ensp;<b>Schneider Electric / Business Wire</b> (2022) 'Schneider Electric makes steady progress toward 2025 sustainability targets', 28 July 2022 (€2.7&nbsp;bn SSI-indexed facilities).</li>
+            <li>[13]&ensp;<b>WBR Field Service</b> (2024) 'Here's how Schneider Electric became number one for sustainability' — Zero Carbon Project (2021), Energize programme (2021), 381M t CO₂ saved/avoided 2018–2021.</li>
+            <li>[14]&ensp;<b>Schneider Electric</b> (2024) <i>Schneider Sustainability Impact — Q1/Q4 2024 results scorecards.</i></li>
+            <li>[15]&ensp;<b>Energynews.pro</b> (2025) 'Schneider Electric posts record profits in 2024 driven by energy transition and data centres', 21 February 2025.</li>
+            <li>[16]&ensp;<b>World Economic Forum</b> (2023) <i>Global Lighthouse Network: Shaping the next chapter of the Fourth Industrial Revolution</i> — incl. Sustainability Lighthouse designations (Lexington, US; Wuxi, China).</li>
           </ol>
         </section>
 
-        <!-- author footnote -->
-        <section class="pt-12">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 flex flex-wrap items-center gap-4">
-            <i data-lucide="pen-line" class="w-5 h-5 text-cyan-800 shrink-0"></i>
-            <p class="!mb-0 text-[.95rem] leading-relaxed text-slate-600">
-              Manuscript prepared by <strong class="text-slate-900">Ahtisham Ullah</strong>, University of Salento (Università del Salento), Lecce, Italy ·
-              <a href="mailto:ahtisham.ullah@studenti.unisalento.it" class="text-cyan-800 font-medium hover:underline mono text-[.85rem]">ahtisham.ullah@studenti.unisalento.it</a> ·
-              <a href="https://www.linkedin.com/in/ahtisham-ullah-2763b2188/" target="_blank" rel="noopener noreferrer" class="text-[#0a66c2] font-medium hover:underline mono text-[.85rem]">linkedin.com/in/ahtisham-ullah-2763b2188</a>
+        <!-- colophon -->
+        <footer class="mt-14 mb-4">
+          <div class="rule-sm pt-6 flex flex-wrap items-center justify-between gap-4">
+            <p class="!mb-0 italic text-stone-600 text-[1rem]">
+              Manuscript prepared by <span class="font-semibold not-italic text-stone-800">Ahtisham Ullah</span> · University of Salento, Lecce, Italy
             </p>
+            <div class="flex items-center gap-3">
+              <a href="mailto:ahtisham.ullah@studenti.unisalento.it" class="cbtn !w-9 !h-9" aria-label="Send email">
+                <span class="tip">ahtisham.ullah@studenti.unisalento.it</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="#4285F4" d="M2.3 5.6v11.9a1.6 1.6 0 0 0 1.6 1.6h1.7V8.6L2.3 5.6z"/>
+                  <path fill="#34A853" d="M18.4 8.6v10.5h1.7a1.6 1.6 0 0 0 1.6-1.6V5.6l-3.3 3z"/>
+                  <path fill="#EA4335" d="M2.3 5.6l9.7 7.3V9.6L5.4 4.6C4.1 3.7 2.3 4.5 2.3 5.6z"/>
+                  <path fill="#FBBC04" d="M21.7 5.6l-9.7 7.3V9.6l6.5-5c1.3-.9 3.2-.1 3.2 1z"/>
+                </svg>
+              </a>
+              <a href="https://www.linkedin.com/in/ahtisham-ullah-2763b2188/" target="_blank" rel="noopener noreferrer" class="cbtn !w-9 !h-9" aria-label="LinkedIn profile">
+                <span class="tip">linkedin.com/in/ahtisham-ullah</span>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+                  <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="3" fill="#0A66C2"/>
+                  <path fill="#ffffff" d="M8.1 9.4H5.7v8.9h2.4V9.4zM6.9 8.2a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8zm4.1 1.2h2.3v1.2h.03c.32-.6 1.1-1.25 2.27-1.25 2.43 0 2.88 1.6 2.88 3.67v5.2h-2.4v-4.6c0-1.1-.02-2.52-1.53-2.52-1.54 0-1.77 1.2-1.77 2.44v4.68H11V9.4z"/>
+                </svg>
+              </a>
+            </div>
           </div>
-        </section>
+        </footer>
 
-        </article>
-      </div>
-      <!-- ═══ /DOCUMENT SHEET ═══ -->
-    </div>
-
-    <!-- bridge to dashboards (outside sheet) -->
-    <div class="max-w-[940px] lg:ml-[calc(13rem+2.5rem)] xl:ml-[calc(13rem+3.5rem)] pt-10">
-      <div class="grid md:grid-cols-2 gap-4">
-        <button class="js-goto text-left glass rounded-2xl p-7 card-glow group" data-v="live">
-          <div class="mono text-[11px] font-bold tracking-[0.18em] text-cyan-800 mb-3 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> EVIDENCE RIG · PART II</div>
-          <div class="font-['Space_Grotesk'] font-bold text-xl text-slate-900 mb-2">Live Telemetry Dashboard</div>
-          <p class="!mb-0 text-[.92rem] leading-relaxed text-slate-600">A simulated EcoStruxure-style monitoring rig that operationalises the measurement layer described in Sections 5–7.</p>
-          <div class="mono text-[12px] font-bold text-cyan-800 mt-4 group-hover:translate-x-1 transition-transform">OPEN DASHBOARD →</div>
-        </button>
-        <button class="js-goto text-left glass rounded-2xl p-7 card-glow group" data-v="test">
-          <div class="mono text-[11px] font-bold tracking-[0.18em] text-violet-800 mb-3 flex items-center gap-2"><i data-lucide="flask-conical" class="w-4 h-4"></i> EVIDENCE RIG · PART III</div>
-          <div class="font-['Space_Grotesk'] font-bold text-xl text-slate-900 mb-2">Test Dashboard &amp; Data Collector</div>
-          <p class="!mb-0 text-[.92rem] leading-relaxed text-slate-600">Captures every reading into a timestamped dataset with live statistics, anomaly injection and CSV export.</p>
-          <div class="mono text-[12px] font-bold text-violet-800 mt-4 group-hover:translate-x-1 transition-transform">OPEN TEST RIG →</div>
-        </button>
-      </div>
+        <!-- bridge to dashboards -->
+        <div class="ui grid sm:grid-cols-2 gap-3 mt-6 mb-4">
+          <button class="js-goto card px-5 py-4 text-left group" data-v="live">
+            <div class="sc mb-1.5">Demonstrator I</div>
+            <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">Live Telemetry Dashboard →</div>
+            <p class="text-[13px] text-stone-500 mt-1 leading-snug">Continuous monitoring of an instrumented facility (Sections 5–7).</p>
+          </button>
+          <button class="js-goto card px-5 py-4 text-left group" data-v="test">
+            <div class="sc mb-1.5">Demonstrator II</div>
+            <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">Test Dashboard &amp; Collector →</div>
+            <p class="text-[13px] text-stone-500 mt-1 leading-snug">Timed data capture with statistics and CSV export (Section 6).</p>
+          </button>
+        </div>
+      </article>
     </div>
   </section>
 
-  <!-- ══════════ VIEW : LIVE MONITOR ══════════ -->
+  <!-- ══════════════ PAGE 2 · LIVE DASHBOARD ══════════════ -->
   <section id="view-live" class="view hidden">
-    <div class="pt-10 pb-8 flex flex-wrap items-end justify-between gap-6">
-      <div>
-        <div class="mono text-[11px] font-bold tracking-[0.18em] text-cyan-800 mb-3 flex items-center gap-2">
-          <span class="w-8 h-px bg-cyan-700/60"></span> STATION 01 · ENVIRONMENT ARRAY
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-8">
+      <div class="pt-9 pb-7 flex flex-wrap items-end justify-between gap-5 border-b border-stone-900">
+        <div>
+          <div class="sc mb-2">Demonstrator I · Station 01</div>
+          <h1 class="text-[2rem] md:text-[2.6rem] font-semibold text-stone-900 leading-none">Live Telemetry <span class="italic">Dashboard</span></h1>
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-[0.95] text-slate-900">
-          Sensor<br><span class="bg-gradient-to-r from-cyan-700 via-sky-700 to-violet-700 bg-clip-text text-transparent">Telemetry.</span>
-        </h1>
-      </div>
-      <div class="flex gap-3">
-        <div class="glass rounded-2xl px-5 py-4 text-right">
-          <div class="mono text-[10.5px] font-semibold text-slate-500 tracking-[0.12em] mb-1">UPTIME</div>
-          <div class="mono text-xl font-semibold text-slate-900" id="uptime">00:00:00</div>
-        </div>
-        <div class="glass rounded-2xl px-5 py-4 text-right">
-          <div class="mono text-[10.5px] font-semibold text-slate-500 tracking-[0.12em] mb-1">TICKS</div>
-          <div class="mono text-xl font-semibold text-slate-900" id="tickCount">0</div>
-        </div>
-        <button id="btnStream" class="glass rounded-2xl px-5 py-4 flex items-center gap-3 hover:border-cyan-400 transition-colors group">
-          <span id="streamIcon"><i data-lucide="pause" class="w-5 h-5 text-amber-600"></i></span>
-          <span class="text-left leading-none">
-            <span class="mono text-[10.5px] font-semibold text-slate-500 tracking-[0.12em] block mb-1">STREAM</span>
-            <span class="text-sm font-bold text-slate-900" id="streamBtnLabel">Pause</span>
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <!-- sensor cards -->
-    <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-
-    <!-- trend chart + alerts -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-      <div class="glass rounded-2xl p-6 lg:col-span-2 card-glow">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-          <div class="flex items-center gap-3">
-            <i data-lucide="chart-spline" class="w-4 h-4 text-cyan-800"></i>
-            <h2 class="font-bold tracking-wide text-sm text-slate-900">TREND · LAST 90 TICKS</h2>
+        <div class="flex gap-2.5 ui">
+          <div class="card px-4 py-3 text-right">
+            <div class="sc !text-[9.5px] mb-1">Uptime</div>
+            <div class="mono text-lg font-semibold text-stone-900" id="uptime">00:00:00</div>
           </div>
-          <div id="chartTabs" class="flex flex-wrap gap-1.5"></div>
-        </div>
-        <div class="relative h-[300px]" id="chartWrap">
-          <canvas id="mainChart" class="w-full h-full block"></canvas>
-          <div id="chartTip" class="hidden absolute pointer-events-none mono text-[12px] font-medium px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 shadow-lg text-slate-800 whitespace-nowrap z-10"></div>
+          <div class="card px-4 py-3 text-right">
+            <div class="sc !text-[9.5px] mb-1">Ticks</div>
+            <div class="mono text-lg font-semibold text-stone-900" id="tickCount">0</div>
+          </div>
+          <button id="btnStream" class="card px-4 py-3 flex items-center gap-3 hover:border-stone-400 transition-colors">
+            <span id="streamIcon"></span>
+            <span class="text-left leading-none">
+              <span class="sc !text-[9.5px] block mb-1">Stream</span>
+              <span class="ui text-[13px] font-bold text-stone-900" id="streamBtnLabel">Pause</span>
+            </span>
+          </button>
         </div>
       </div>
 
-      <div class="glass rounded-2xl p-6 card-glow flex flex-col">
-        <div class="flex items-center gap-3 mb-5">
-          <i data-lucide="siren" class="w-4 h-4 text-amber-600"></i>
-          <h2 class="font-bold tracking-wide text-sm text-slate-900">EVENT LOG</h2>
-          <span class="mono text-[11px] font-medium text-slate-500 ml-auto" id="alertCount">0 events</span>
+      <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-6"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        <div class="dash-card p-6 lg:col-span-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800">Trend · last 90 ticks</h2>
+            <div id="chartTabs" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div class="relative h-[300px]" id="chartWrap">
+            <canvas id="mainChart" class="w-full h-full block"></canvas>
+            <div id="chartTip" class="hidden absolute pointer-events-none mono text-[11.5px] font-medium px-2.5 py-1.5 rounded-md bg-stone-900 text-stone-100 shadow-lg whitespace-nowrap z-10"></div>
+          </div>
         </div>
-        <div id="alerts" class="thin-scroll flex-1 overflow-y-auto max-h-[300px] space-y-2 pr-1">
-          <div class="mono text-[12px] text-slate-500 py-8 text-center">No threshold events yet.<br>System nominal.</div>
+        <div class="dash-card p-6 flex flex-col">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800">Event log</h2>
+            <span class="mono text-[10.5px] font-medium text-stone-500 ml-auto" id="alertCount">0 events</span>
+          </div>
+          <div id="alerts" class="thin-scroll flex-1 overflow-y-auto max-h-[300px] space-y-2 pr-1">
+            <div class="mono text-[11.5px] text-stone-500 py-8 text-center">No threshold events yet.<br>System nominal.</div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════ VIEW : TEST DASHBOARD ══════════ -->
+  <!-- ══════════════ PAGE 3 · TEST DASHBOARD ══════════════ -->
   <section id="view-test" class="view hidden">
-    <div class="pt-10 pb-8 flex flex-wrap items-end justify-between gap-6">
-      <div>
-        <div class="mono text-[11px] font-bold tracking-[0.18em] text-violet-800 mb-3 flex items-center gap-2">
-          <span class="w-8 h-px bg-violet-700/60"></span> DATA COLLECTION · TEST RIG
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-8">
+      <div class="pt-9 pb-7 flex flex-wrap items-end justify-between gap-5 border-b border-stone-900">
+        <div>
+          <div class="sc mb-2">Demonstrator II · Data collector</div>
+          <h1 class="text-[2rem] md:text-[2.6rem] font-semibold text-stone-900 leading-none">Test <span class="italic">Dashboard</span></h1>
         </div>
-        <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-[0.95] text-slate-900">
-          Test<br><span class="bg-gradient-to-r from-violet-700 via-fuchsia-700 to-cyan-700 bg-clip-text text-transparent">Dashboard.</span>
-        </h1>
+        <p class="ui text-stone-600 text-[13.5px] max-w-sm leading-relaxed">
+          Capture every reading into a timed dataset. Inject anomalies to stress-test the collector, then export the run as CSV.
+        </p>
       </div>
-      <p class="text-slate-600 text-[15px] max-w-sm leading-relaxed">
-        Capture every sensor reading into a timed dataset. Inject anomalies to stress-test the collector, then export the run as CSV.
-      </p>
-    </div>
 
-    <!-- control deck -->
-    <div class="glass rounded-2xl p-5 md:p-6">
-      <div class="flex flex-wrap items-center gap-3">
-        <button id="btnRecord" class="flex items-center gap-3 rounded-2xl px-6 py-3.5 font-bold text-sm transition-all bg-white border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50 shadow-sm">
-          <span id="recIcon"><i data-lucide="circle-dot" class="w-4.5 h-4.5"></i></span>
-          <span id="recLabel">Start Capture</span>
-        </button>
-
-        <div class="glass rounded-2xl px-4 py-2.5 flex items-center gap-3">
-          <i data-lucide="timer" class="w-4 h-4 text-slate-500"></i>
-          <div class="leading-none">
-            <div class="mono text-[9.5px] font-semibold text-slate-500 tracking-[0.12em] mb-1">INTERVAL</div>
-            <select id="selInterval" class="bg-transparent mono text-[13px] font-semibold text-slate-800 outline-none cursor-pointer pr-4">
-              <option value="1" class="bg-white">1 s</option>
-              <option value="2" class="bg-white">2 s</option>
-              <option value="5" class="bg-white">5 s</option>
-              <option value="10" class="bg-white">10 s</option>
-            </select>
+      <div class="dash-card p-5 mt-6 ui">
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="btnRecord" class="flex items-center gap-2.5 rounded-lg px-5 py-3 font-bold text-[13px] uppercase tracking-wider transition-colors bg-white border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white">
+            <span id="recIcon"></span><span id="recLabel">Start Capture</span>
+          </button>
+          <div class="card px-4 py-2 flex items-center gap-3">
+            <div class="leading-none">
+              <div class="sc !text-[9.5px] mb-1">Interval</div>
+              <select id="selInterval" class="bg-transparent mono text-[13px] font-semibold text-stone-800 outline-none cursor-pointer pr-3">
+                <option value="1">1 s</option><option value="2">2 s</option>
+                <option value="5">5 s</option><option value="10">10 s</option>
+              </select>
+            </div>
           </div>
+          <button id="btnAnomaly" class="card px-4 py-3 text-[13px] font-bold uppercase tracking-wider text-amber-700 hover:border-amber-500 hover:bg-amber-50 transition-colors">Inject Anomaly</button>
+          <div class="flex-1"></div>
+          <div class="card px-4 py-2 leading-none">
+            <div class="sc !text-[9.5px] mb-1">Samples</div>
+            <div class="mono text-lg font-semibold text-stone-900" id="statSamples">0</div>
+          </div>
+          <div class="card px-4 py-2 leading-none">
+            <div class="sc !text-[9.5px] mb-1">Duration</div>
+            <div class="mono text-lg font-semibold text-stone-900" id="statDuration">00:00</div>
+          </div>
+          <button id="btnCsv" class="card px-4 py-3 text-[13px] font-bold uppercase tracking-wider text-stone-800 hover:border-stone-500 transition-colors disabled:opacity-30 disabled:pointer-events-none" disabled>Export CSV</button>
+          <button id="btnClear" class="card px-4 py-3 text-[13px] font-bold uppercase tracking-wider text-stone-600 hover:border-red-400 hover:text-red-700 transition-colors disabled:opacity-30 disabled:pointer-events-none" disabled>Clear</button>
         </div>
-
-        <button id="btnAnomaly" class="glass rounded-2xl px-5 py-3.5 flex items-center gap-2.5 text-sm font-semibold text-amber-700 hover:border-amber-400 hover:bg-amber-50 transition-all">
-          <i data-lucide="zap" class="w-4 h-4"></i> Inject Anomaly
-        </button>
-
-        <div class="flex-1"></div>
-
-        <div class="glass rounded-2xl px-5 py-2.5 leading-none">
-          <div class="mono text-[9.5px] font-semibold text-slate-500 tracking-[0.12em] mb-1">SAMPLES</div>
-          <div class="mono text-lg font-semibold text-slate-900" id="statSamples">0</div>
-        </div>
-        <div class="glass rounded-2xl px-5 py-2.5 leading-none">
-          <div class="mono text-[9.5px] font-semibold text-slate-500 tracking-[0.12em] mb-1">DURATION</div>
-          <div class="mono text-lg font-semibold text-slate-900" id="statDuration">00:00</div>
-        </div>
-
-        <button id="btnCsv" class="glass rounded-2xl px-5 py-3.5 flex items-center gap-2.5 text-sm font-semibold text-cyan-800 hover:border-cyan-500 hover:bg-cyan-50 transition-all disabled:opacity-30 disabled:pointer-events-none" disabled>
-          <i data-lucide="file-down" class="w-4 h-4"></i> Export CSV
-        </button>
-        <button id="btnClear" class="glass rounded-2xl px-5 py-3.5 flex items-center gap-2.5 text-sm font-semibold text-slate-600 hover:border-red-400 hover:text-red-700 hover:bg-red-50 transition-all disabled:opacity-30 disabled:pointer-events-none" disabled>
-          <i data-lucide="trash-2" class="w-4 h-4"></i> Clear
-        </button>
+        <div id="statChips" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mt-4"></div>
       </div>
 
-      <!-- per-sensor collection stats -->
-      <div id="statChips" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mt-5"></div>
-    </div>
-
-    <!-- readings table -->
-    <div class="glass rounded-2xl mt-4 overflow-hidden">
-      <div class="flex flex-wrap items-center gap-3 px-6 py-4 border-b border-slate-200 bg-white">
-        <i data-lucide="table-2" class="w-4 h-4 text-cyan-800"></i>
-        <h2 class="font-bold tracking-wide text-sm text-slate-900">COLLECTED READINGS</h2>
-        <span class="mono text-[11px] font-medium text-slate-500" id="tableInfo">showing latest 250</span>
-        <label class="ml-auto flex items-center gap-2 cursor-pointer select-none">
-          <input type="checkbox" id="chkAutoScroll" checked class="accent-cyan-700 w-4 h-4">
-          <span class="mono text-[12px] font-medium text-slate-600">auto-scroll</span>
-        </label>
-      </div>
-      <div id="tableWrap" class="thin-scroll overflow-auto max-h-[520px] bg-white">
-        <table class="rtable w-full text-left border-collapse min-w-[900px]">
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody">
-            <tr><td colspan="9" class="mono text-[13px] text-slate-500 text-center py-16">
-              Press <span class="text-emerald-700 font-bold">Start Capture</span> to begin collecting readings…
-            </td></tr>
-          </tbody>
-        </table>
+      <div class="dash-card mt-4 overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-6 py-3.5 border-b border-[#e3e0da] bg-white">
+          <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800">Collected readings</h2>
+          <span class="mono text-[10.5px] font-medium text-stone-500" id="tableInfo">showing latest 250</span>
+          <label class="ml-auto flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="chkAutoScroll" checked class="accent-stone-800 w-4 h-4">
+            <span class="ui text-[12px] font-medium text-stone-600">auto-scroll</span>
+          </label>
+        </div>
+        <div id="tableWrap" class="thin-scroll overflow-auto max-h-[520px] bg-white">
+          <table class="rtable w-full text-left border-collapse min-w-[900px]">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody">
+              <tr><td colspan="9" class="mono text-[12px] text-stone-500 text-center py-16">Press <span class="text-emerald-700 font-bold">Start Capture</span> to begin collecting readings…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
 
-  <footer class="mt-16 pt-6 border-t border-slate-300 flex flex-wrap items-center justify-between gap-4">
-    <div class="mono text-[11px] font-medium tracking-[0.12em] text-slate-500">© 2026 AHTISHAM ULLAH · UNIVERSITY OF SALENTO (UNISALENTO)</div>
-    <div class="mono text-[11px] font-medium tracking-[0.12em] text-slate-500">SCHNEIDER ELECTRIC ESG CASE STUDY · SIMULATED TELEMETRY RIG</div>
+  <footer class="max-w-[1200px] mx-auto px-5 lg:px-8 mt-14 pt-5 border-t border-stone-900 flex flex-wrap items-center justify-between gap-3">
+    <div class="ui text-[10.5px] font-semibold tracking-[0.14em] uppercase text-stone-500">© 2026 Ahtisham Ullah · University of Salento</div>
+    <div class="ui text-[10.5px] font-semibold tracking-[0.14em] uppercase text-stone-500">Schneider Electric ESG Case Study · Demonstrator Rig</div>
   </footer>
 </main>
 
 <script>
-/* ═══════════════════════ SENSOR MODEL ═══════════════════════ */
+/* ═══════════ INLINE SVG ICON LIBRARY (no external icon set) ═══════════ */
+const IC = {
+  thermometer:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>',
+  droplets:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>',
+  gauge:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>',
+  cloud:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>',
+  sun:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+  zap:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+  pause:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+  play:'<svg width="18" height="18" viewBox="0 0 24 24" fill="COLOR" stroke="COLOR" stroke-width="1" stroke-linejoin="round"><path d="M6 4.5v15l13-7.5-13-7.5z"/></svg>',
+  dot:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>',
+  square:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+};
+const iconFor = s => IC[s.icon].replaceAll('COLOR', s.color);
+
+/* ═══════════ SENSOR MODEL ═══════════ */
 const SENSORS = [
-  { id:'temp', name:'Temperature', desc:'Ambient air',   unit:'°C',  icon:'thermometer', color:'#0e7490', min:16, max:34, dp:1, step:.45, value:22.4, warn:28,   crit:32 },
-  { id:'hum',  name:'Humidity',    desc:'Relative',      unit:'%RH', icon:'droplets',   color:'#4f46e5', min:25, max:75, dp:1, step:.8,  value:44,   warn:62,   crit:70 },
-  { id:'press',name:'Pressure',    desc:'Barometric',    unit:'hPa', icon:'gauge',      color:'#047857', min:988,max:1034,dp:1, step:.35, value:1013.2,warn:1026, crit:1031 },
-  { id:'co2',  name:'CO₂',         desc:'Air quality',   unit:'ppm', icon:'cloud',      color:'#b45309', min:380,max:1200,dp:0, step:9,  value:512,  warn:900,  crit:1100 },
-  { id:'lux',  name:'Light',       desc:'Illuminance',   unit:'lx',  icon:'sun',        color:'#be185d', min:60, max:950,dp:0, step:14, value:340,  warn:820,  crit:920 },
-  { id:'pwr',  name:'Power Draw',  desc:'System load',   unit:'W',   icon:'zap',        color:'#6d28d9', min:35, max:160,dp:1, step:2.2,value:72,   warn:130,  crit:150 },
+  { id:'temp', name:'Temperature', desc:'Ambient air',   unit:'°C',  icon:'thermometer', color:'#1d4ed8', min:16, max:34,  dp:1, step:.45, value:22.4,   warn:28,   crit:32 },
+  { id:'hum',  name:'Humidity',    desc:'Relative',      unit:'%RH', icon:'droplets',   color:'#4f46e5', min:25, max:75,  dp:1, step:.8,  value:44,     warn:62,   crit:70 },
+  { id:'press',name:'Pressure',    desc:'Barometric',    unit:'hPa', icon:'gauge',      color:'#047857', min:988,max:1034,dp:1, step:.35, value:1013.2, warn:1026, crit:1031 },
+  { id:'co2',  name:'CO₂',         desc:'Air quality',   unit:'ppm', icon:'cloud',      color:'#b45309', min:380,max:1200,dp:0, step:9,   value:512,    warn:900,  crit:1100 },
+  { id:'lux',  name:'Light',       desc:'Illuminance',   unit:'lx',  icon:'sun',        color:'#be185d', min:60, max:950, dp:0, step:14,  value:340,    warn:820,  crit:920 },
+  { id:'pwr',  name:'Power Draw',  desc:'System load',   unit:'W',   icon:'zap',        color:'#6b21a8', min:35, max:160, dp:1, step:2.2, value:72,     warn:130,  crit:150 },
 ];
 const HISTORY = 90;
 SENSORS.forEach(s => { s.history = []; s.lo = s.value; s.hi = s.value; s.status = 'ok'; s.anom = 0; });
 
-/* ═══════════════════════ STATE ═══════════════════════ */
-const state = {
-  streaming: true, tick: 0, startedAt: Date.now(),
-  recording: false, recEvery: 1, recStartedAt: null,
-  readings: [],
-  selected: 'temp',
-  alerts: [],
-};
-
+const state = { streaming:true, tick:0, startedAt:Date.now(), recording:false, recEvery:1, recStartedAt:null, readings:[], selected:'temp', alerts:[] };
 const $ = id => document.getElementById(id);
 const fmtT = d => d.toTimeString().slice(0,8);
 const pad = n => String(n).padStart(2,'0');
 const hexA = (hex,a) => { const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
 
-/* ═══════════════════════ BUILD: SENSOR CARDS ═══════════════════════ */
+/* ═══════════ BUILD UI ═══════════ */
 function buildCards(){
   $('cards').innerHTML = SENSORS.map(s => `
-    <div id="card-${s.id}" class="glass rounded-2xl p-5 card-glow relative overflow-hidden">
-      <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full blur-3xl opacity-[.08] pointer-events-none" style="background:${s.color}"></div>
-      <div class="flex items-start justify-between mb-4 relative">
+    <div id="card-${s.id}" class="dash-card p-5 ui">
+      <div class="flex items-start justify-between mb-3.5">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl grid place-items-center border border-slate-200" style="background:${hexA(s.color,.09)}">
-            <i data-lucide="${s.icon}" class="w-4.5 h-4.5" style="color:${s.color}"></i>
-          </div>
+          <div class="w-10 h-10 rounded-lg grid place-items-center border border-[#e3e0da]" style="background:${hexA(s.color,.07)}">${iconFor(s)}</div>
           <div class="leading-tight">
-            <div class="font-bold text-[15px] text-slate-900">${s.name}</div>
-            <div class="mono text-[10.5px] font-medium text-slate-500 tracking-wide mt-0.5">${s.desc.toUpperCase()} · CH-${SENSORS.indexOf(s)+1}</div>
+            <div class="font-bold text-[14.5px] text-stone-900">${s.name}</div>
+            <div class="mono text-[10px] font-medium text-stone-500 tracking-wider mt-0.5">${s.desc.toUpperCase()} · CH-${SENSORS.indexOf(s)+1}</div>
           </div>
         </div>
         <div id="badge-${s.id}" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-300 bg-emerald-50">
-          <span class="pip pip-ok"></span><span class="mono text-[9.5px] font-bold tracking-widest text-emerald-800">NOMINAL</span>
+          <span class="pip pip-ok"></span><span class="ui text-[9px] font-bold tracking-widest text-emerald-800">NOMINAL</span>
         </div>
       </div>
-      <div class="flex items-end justify-between gap-4 relative">
+      <div class="flex items-end justify-between gap-4">
         <div>
           <div class="flex items-baseline gap-1.5">
-            <span id="val-${s.id}" class="mono text-4xl font-bold tracking-tight text-slate-900">${s.value.toFixed(s.dp)}</span>
-            <span class="mono text-sm font-medium text-slate-500">${s.unit}</span>
+            <span id="val-${s.id}" class="mono text-[2rem] font-bold tracking-tight text-stone-900">${s.value.toFixed(s.dp)}</span>
+            <span class="mono text-[12.5px] font-medium text-stone-500">${s.unit}</span>
           </div>
-          <div class="mono text-[10.5px] font-medium text-slate-500 mt-2 tracking-wide">
-            LO <span id="lo-${s.id}" class="text-slate-800 font-semibold">${s.value.toFixed(s.dp)}</span>
-            · HI <span id="hi-${s.id}" class="text-slate-800 font-semibold">${s.value.toFixed(s.dp)}</span>
-            · WARN ≥ ${s.warn}${s.unit}
+          <div class="mono text-[10px] font-medium text-stone-500 mt-1.5 tracking-wide">
+            LO <span id="lo-${s.id}" class="text-stone-800 font-semibold">${s.value.toFixed(s.dp)}</span> ·
+            HI <span id="hi-${s.id}" class="text-stone-800 font-semibold">${s.value.toFixed(s.dp)}</span> ·
+            WARN ≥ ${s.warn}${s.unit}
           </div>
         </div>
-        <canvas id="spark-${s.id}" class="w-[130px] h-[52px] shrink-0"></canvas>
+        <canvas id="spark-${s.id}" class="w-[128px] h-[50px] shrink-0"></canvas>
       </div>
-      <div class="stat-bar mt-4"><div id="bar-${s.id}" style="width:30%;background:linear-gradient(90deg,${hexA(s.color,.4)},${s.color})"></div></div>
+      <div class="stat-bar mt-3.5"><div id="bar-${s.id}" style="width:30%;background:${s.color}"></div></div>
     </div>`).join('');
-  lucide.createIcons();
 }
 
-/* ═══════════════════════ BUILD: CHART TABS ═══════════════════════ */
-const CTAB_ON  = 'ctab mono text-[11.5px] font-semibold px-3 py-1.5 rounded-lg border transition-all border-slate-400 text-slate-900 bg-slate-100';
-const CTAB_OFF = 'ctab mono text-[11.5px] font-semibold px-3 py-1.5 rounded-lg border transition-all border-slate-200 text-slate-500 hover:text-slate-800 bg-white';
+const CTAB_ON  = 'ctab ui text-[11px] font-semibold px-3 py-1.5 rounded-md border transition-colors border-stone-800 text-stone-900 bg-stone-100';
+const CTAB_OFF = 'ctab ui text-[11px] font-semibold px-3 py-1.5 rounded-md border transition-colors border-[#e3e0da] text-stone-500 hover:text-stone-900 bg-white';
 function buildChartTabs(){
   $('chartTabs').innerHTML = SENSORS.map(s =>
     `<button data-sensor="${s.id}" class="${s.id===state.selected?CTAB_ON:CTAB_OFF}">${s.name}</button>`).join('');
@@ -928,89 +904,80 @@ function buildChartTabs(){
     drawMainChart();
   }));
 }
-
-/* ═══════════════════════ BUILD: TEST TABLE ═══════════════════════ */
 function buildTableHead(){
-  $('tableHead').innerHTML = `<tr class="mono text-[10.5px] font-bold tracking-[0.1em] text-slate-600">
-    <th class="px-5 py-3">#</th>
-    <th class="px-4 py-3">TIMESTAMP</th>
-    ${SENSORS.map(s => `<th class="px-4 py-3" style="color:${s.color}">${s.name.toUpperCase()} <span class="text-slate-500 font-medium">${s.unit}</span></th>`).join('')}
-    <th class="px-4 py-3 text-right">FLAGS</th>
-  </tr>`;
+  $('tableHead').innerHTML = `<tr>
+    <th class="px-5 py-3">#</th><th class="px-4 py-3">Timestamp</th>
+    ${SENSORS.map(s => `<th class="px-4 py-3" style="color:${s.color}">${s.name} <span class="text-stone-400 font-medium">${s.unit}</span></th>`).join('')}
+    <th class="px-4 py-3 text-right">Flags</th></tr>`;
 }
-
 function buildStatChips(){
   $('statChips').innerHTML = SENSORS.map(s => `
-    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-      <div class="flex items-center gap-2 mb-2">
+    <div class="rounded-lg border border-[#e3e0da] bg-[#fafaf9] px-3.5 py-2.5">
+      <div class="flex items-center gap-2 mb-1.5">
         <span class="w-2.5 h-2.5 rounded-full" style="background:${s.color}"></span>
-        <span class="mono text-[10.5px] font-bold tracking-[0.08em] text-slate-700">${s.name.toUpperCase()}</span>
+        <span class="ui text-[10px] font-bold tracking-wider text-stone-600 uppercase">${s.name}</span>
       </div>
-      <div id="chip-${s.id}" class="mono text-[11px] leading-relaxed text-slate-500">no samples</div>
+      <div id="chip-${s.id}" class="mono text-[10.5px] leading-relaxed text-stone-500">no samples</div>
     </div>`).join('');
 }
 
-/* ═══════════════════════ SIMULATION ═══════════════════════ */
+/* ═══════════ SIMULATION ═══════════ */
 function simulate(){
   SENSORS.forEach(s => {
-    const center = (s.min + s.max) / 2;
-    let drift = (Math.random() - .5) * 2 * s.step;
-    drift += (center - s.value) * 0.012;
-    if (s.anom > 0) { drift += (Math.random() - .35) * s.step * 9; s.anom--; }
-    s.value = Math.max(s.min * .9, Math.min(s.max * 1.12, s.value + drift));
-    s.lo = Math.min(s.lo, s.value); s.hi = Math.max(s.hi, s.value);
+    const center = (s.min+s.max)/2;
+    let drift = (Math.random()-.5)*2*s.step + (center-s.value)*0.012;
+    if (s.anom > 0){ drift += (Math.random()-.35)*s.step*9; s.anom--; }
+    s.value = Math.max(s.min*.9, Math.min(s.max*1.12, s.value+drift));
+    s.lo = Math.min(s.lo,s.value); s.hi = Math.max(s.hi,s.value);
     s.history.push(s.value); if (s.history.length > HISTORY) s.history.shift();
-
     const st = s.value >= s.crit ? 'crit' : s.value >= s.warn ? 'warn' : 'ok';
-    if (st !== s.status) { pushAlert(st, s); s.status = st; }
+    if (st !== s.status){ pushAlert(st, s); s.status = st; }
   });
 }
 
-/* ═══════════════════════ ALERTS ═══════════════════════ */
+/* ═══════════ ALERTS ═══════════ */
 function pushAlert(level, s){
   const map = {
-    crit:{ label:'CRITICAL', cls:'text-red-800 border-red-300 bg-red-50',       dot:'#dc2626' },
-    warn:{ label:'WARNING',  cls:'text-amber-800 border-amber-300 bg-amber-50', dot:'#d97706' },
-    ok:  { label:'RESOLVED', cls:'text-emerald-800 border-emerald-300 bg-emerald-50', dot:'#059669' },
+    crit:{ label:'CRITICAL', cls:'border-red-300 bg-red-50',       txt:'text-red-800',    dot:'#dc2626' },
+    warn:{ label:'WARNING',  cls:'border-amber-300 bg-amber-50',   txt:'text-amber-800',  dot:'#d97706' },
+    ok:  { label:'RESOLVED', cls:'border-emerald-300 bg-emerald-50', txt:'text-emerald-800', dot:'#059669' },
   }[level];
-  const msg = level==='ok'
-    ? `${s.name} returned to normal range`
+  const msg = level==='ok' ? `${s.name} returned to normal range`
     : `${s.name} ${level==='crit'?'crossed CRITICAL':'exceeded warning'} at ${s.value.toFixed(s.dp)}${s.unit}`;
-  state.alerts.unshift({ t:new Date(), level, msg, ...{map} });
+  state.alerts.unshift({ t:new Date(), msg, map });
   if (state.alerts.length > 40) state.alerts.pop();
-  renderAlerts();
-  updateBadge(s);
+  renderAlerts(); updateBadge(s);
 }
 function renderAlerts(){
   const el = $('alerts');
   $('alertCount').textContent = `${state.alerts.length} events`;
-  if (!state.alerts.length){ el.innerHTML = `<div class="mono text-[12px] text-slate-500 py-8 text-center">No threshold events yet.<br>System nominal.</div>`; return; }
+  if (!state.alerts.length){ el.innerHTML = `<div class="mono text-[11.5px] text-stone-500 py-8 text-center">No threshold events yet.<br>System nominal.</div>`; return; }
   el.innerHTML = state.alerts.map(a => `
-    <div class="flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 ${a.map.cls}">
+    <div class="ui flex items-start gap-2.5 rounded-lg border px-3 py-2.5 ${a.map.cls}">
       <span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background:${a.map.dot}"></span>
       <div class="min-w-0">
-        <div class="mono text-[10px] font-bold tracking-widest opacity-90">${a.map.label} · ${fmtT(a.t)}</div>
-        <div class="text-[12.5px] font-medium text-slate-800 leading-snug mt-0.5">${a.msg}</div>
+        <div class="mono text-[9.5px] font-bold tracking-widest ${a.map.txt}">${a.map.label} · ${fmtT(a.t)}</div>
+        <div class="text-[12.5px] font-medium text-stone-800 leading-snug mt-0.5">${a.msg}</div>
       </div>
     </div>`).join('');
 }
 function updateBadge(s){
-  const b = $(`badge-${s.id}`);
+  const b = $(`badge-${s.id}`); if (!b) return;
   const conf = {
     ok:  ['border-emerald-300 bg-emerald-50','pip pip-ok','text-emerald-800','NOMINAL'],
     warn:['border-amber-300 bg-amber-50','pip pip-warn','text-amber-800','WARNING'],
     crit:['border-red-300 bg-red-50','pip pip-crit','text-red-800','CRITICAL'],
   }[s.status];
   b.className = `flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${conf[0]}`;
-  b.innerHTML = `<span class="${conf[1]}"></span><span class="mono text-[9.5px] font-bold tracking-widest ${conf[2]}">${conf[3]}</span>`;
+  b.innerHTML = `<span class="${conf[1]}"></span><span class="ui text-[9px] font-bold tracking-widest ${conf[2]}">${conf[3]}</span>`;
 }
 
-/* ═══════════════════════ CANVAS: SPARKLINES ═══════════════════════ */
+/* ═══════════ CHARTS ═══════════ */
 function fitCanvas(cv){
   const dpr = window.devicePixelRatio || 1;
   const r = cv.getBoundingClientRect();
   if (!r.width) return null;
-  cv.width = r.width * dpr; cv.height = r.height * dpr;
+  cv.width = r.width*dpr; cv.height = r.height*dpr;
   const ctx = cv.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
   return { ctx, w:r.width, h:r.height };
@@ -1022,22 +989,19 @@ function drawSpark(s){
   if (d.length < 2) return;
   const lo = Math.min(...d), hi = Math.max(...d), span = (hi-lo)||1;
   const px = i => (i/(HISTORY-1))*w;
-  const py = v => h-4 - ((v-lo)/span)*(h-10);
+  const py = v => h-4 - ((v-lo)/span)*(h-9);
   ctx.clearRect(0,0,w,h);
   const grd = ctx.createLinearGradient(0,0,0,h);
-  grd.addColorStop(0, hexA(s.color,.16)); grd.addColorStop(1, hexA(s.color,0));
+  grd.addColorStop(0, hexA(s.color,.14)); grd.addColorStop(1, hexA(s.color,0));
   ctx.beginPath(); ctx.moveTo(0,h);
   d.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
   ctx.lineTo(px(d.length-1),h); ctx.closePath(); ctx.fillStyle = grd; ctx.fill();
   ctx.beginPath();
   d.forEach((v,i)=> i?ctx.lineTo(px(i),py(v)):ctx.moveTo(px(i),py(v)));
-  ctx.strokeStyle = s.color; ctx.lineWidth = 1.8; ctx.lineJoin='round'; ctx.stroke();
-  const lx = px(d.length-1), ly = py(d[d.length-1]);
-  ctx.beginPath(); ctx.arc(lx,ly,2.6,0,7); ctx.fillStyle=s.color; ctx.fill();
-  ctx.beginPath(); ctx.arc(lx,ly,5.5,0,7); ctx.fillStyle=hexA(s.color,.25); ctx.fill();
+  ctx.strokeStyle = s.color; ctx.lineWidth = 1.7; ctx.lineJoin='round'; ctx.stroke();
+  const ly = py(d[d.length-1]);
+  ctx.beginPath(); ctx.arc(px(d.length-1),ly,2.4,0,7); ctx.fillStyle=s.color; ctx.fill();
 }
-
-/* ═══════════════════════ CANVAS: MAIN CHART ═══════════════════════ */
 let hoverIdx = null;
 function drawMainChart(){
   const cv = $('mainChart'); const f = fitCanvas(cv); if (!f) return;
@@ -1045,26 +1009,25 @@ function drawMainChart(){
   const s = SENSORS.find(x => x.id === state.selected);
   const d = s.history;
   ctx.clearRect(0,0,w,h);
-  const padL = 46, padR = 14, padT = 14, padB = 26;
+  const padL = 46, padR = 14, padT = 12, padB = 26;
   const cw = w-padL-padR, ch = h-padT-padB;
   let lo = Math.min(...d, s.lo), hi = Math.max(...d, s.hi);
   if (lo === hi){ lo -= 1; hi += 1; }
-  const margin = (hi-lo)*0.12; lo -= margin; hi += margin;
+  const m = (hi-lo)*0.12; lo -= m; hi += m;
   const px = i => padL + (i/(HISTORY-1))*cw;
   const py = v => padT + ch - ((v-lo)/(hi-lo))*ch;
-
-  ctx.font = '600 10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  ctx.font = '500 10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
   for (let g=0; g<=4; g++){
     const v = lo + (hi-lo)*g/4, y = py(v);
-    ctx.strokeStyle = 'rgba(148,163,184,.35)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(120,113,108,.28)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
-    ctx.fillStyle = '#52606f';
+    ctx.fillStyle = '#57534e';
     ctx.fillText(v.toFixed(s.dp), padL-8, y);
   }
   ctx.textAlign='center'; ctx.textBaseline='top';
   for (let g=0; g<=6; g++){
     const i = Math.round((HISTORY-1)*g/6);
-    ctx.fillStyle='#7c8aa0';
+    ctx.fillStyle='#8a857f';
     ctx.fillText(`t-${HISTORY-1-i}`, px(i), h-padB+8);
   }
   if (s.warn > lo && s.warn < hi){
@@ -1072,46 +1035,40 @@ function drawMainChart(){
     ctx.beginPath(); ctx.moveTo(padL,py(s.warn)); ctx.lineTo(w-padR,py(s.warn)); ctx.stroke(); ctx.setLineDash([]);
   }
   if (d.length < 2) return;
-
   const grd = ctx.createLinearGradient(0,padT,0,h-padB);
-  grd.addColorStop(0, hexA(s.color,.15)); grd.addColorStop(1, hexA(s.color,0));
+  grd.addColorStop(0, hexA(s.color,.12)); grd.addColorStop(1, hexA(s.color,0));
   ctx.beginPath(); ctx.moveTo(px(0), h-padB);
   d.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
-  ctx.lineTo(px(d.length-1), h-padB); ctx.closePath();
-  ctx.fillStyle = grd; ctx.fill();
-
+  ctx.lineTo(px(d.length-1), h-padB); ctx.closePath(); ctx.fillStyle = grd; ctx.fill();
   ctx.beginPath(); ctx.moveTo(px(0), py(d[0]));
   for (let i=1;i<d.length;i++){
     const x0=px(i-1), y0=py(d[i-1]), x1=px(i), y1=py(d[i]);
     ctx.quadraticCurveTo(x0,y0,(x0+x1)/2,(y0+y1)/2);
   }
   ctx.lineTo(px(d.length-1), py(d[d.length-1]));
-  ctx.strokeStyle = s.color; ctx.lineWidth = 2.2; ctx.lineJoin='round'; ctx.stroke();
-
+  ctx.strokeStyle = s.color; ctx.lineWidth = 2.1; ctx.lineJoin='round'; ctx.stroke();
   if (hoverIdx !== null && hoverIdx < d.length){
     const x = px(hoverIdx), y = py(d[hoverIdx]);
-    ctx.strokeStyle='rgba(15,23,42,.3)'; ctx.setLineDash([3,4]);
+    ctx.strokeStyle='rgba(28,25,23,.3)'; ctx.setLineDash([3,4]);
     ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,h-padB); ctx.stroke(); ctx.setLineDash([]);
     ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.fillStyle='#fff'; ctx.fill();
     ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.strokeStyle=s.color; ctx.lineWidth=2; ctx.stroke();
-    ctx.beginPath(); ctx.arc(x,y,8,0,7); ctx.fillStyle=hexA(s.color,.2); ctx.fill();
   }
 }
 $('mainChart').addEventListener('mousemove', e => {
-  const cv = $('mainChart'), r = cv.getBoundingClientRect();
+  const r = $('mainChart').getBoundingClientRect();
   const s = SENSORS.find(x => x.id === state.selected);
   const frac = (e.clientX - r.left - 46) / (r.width - 60);
-  hoverIdx = Math.max(0, Math.min(s.history.length-1, Math.round(frac * (HISTORY-1))));
+  hoverIdx = Math.max(0, Math.min(s.history.length-1, Math.round(frac*(HISTORY-1))));
   const tip = $('chartTip');
   tip.classList.remove('hidden');
   tip.style.left = Math.min(r.width-140, Math.max(0, e.clientX - r.left + 14)) + 'px';
   tip.style.top = Math.max(0, e.clientY - r.top - 14) + 'px';
-  tip.innerHTML = `<span style="color:${s.color};font-weight:700">${s.name}</span> · ${s.history[hoverIdx]?.toFixed(s.dp)}${s.unit} · t-${HISTORY-1-hoverIdx}`;
+  tip.textContent = `${s.name} · ${s.history[hoverIdx]?.toFixed(s.dp)}${s.unit} · t-${HISTORY-1-hoverIdx}`;
   drawMainChart();
 });
 $('mainChart').addEventListener('mouseleave', () => { hoverIdx = null; $('chartTip').classList.add('hidden'); drawMainChart(); });
 
-/* ═══════════════════════ CARD RENDER ═══════════════════════ */
 function renderCards(){
   SENSORS.forEach(s => {
     const v = $(`val-${s.id}`);
@@ -1120,59 +1077,52 @@ function renderCards(){
     $(`lo-${s.id}`).textContent = s.lo.toFixed(s.dp);
     $(`hi-${s.id}`).textContent = s.hi.toFixed(s.dp);
     const range = (s.crit - s.min) || 1;
-    $(`bar-${s.id}`).style.width = Math.max(2, Math.min(100, ((s.value - s.min)/range)*100)) + '%';
-    updateBadge(s);
-    drawSpark(s);
+    $(`bar-${s.id}`).style.width = Math.max(2, Math.min(100, ((s.value-s.min)/range)*100)) + '%';
+    updateBadge(s); drawSpark(s);
   });
 }
 
-/* ═══════════════════════ TEST DASHBOARD / COLLECTOR ═══════════════════════ */
+/* ═══════════ COLLECTOR ═══════════ */
 function collectSample(){
   const now = new Date();
   const vals = {}; SENSORS.forEach(s => vals[s.id] = +s.value.toFixed(s.dp));
   const flags = SENSORS.filter(s => s.status !== 'ok').map(s => `${s.id}:${s.status}`);
-  state.readings.push({ n: state.readings.length + 1, t: now, vals, flags });
+  state.readings.push({ n: state.readings.length+1, t: now, vals, flags });
   appendRow(state.readings[state.readings.length-1]);
-  renderStats();
-  syncCollectorUI();
+  renderStats(); syncCollectorUI();
   if ($('chkAutoScroll').checked) $('tableWrap').scrollTop = 0;
 }
-
 function appendRow(r){
   const body = $('tableBody');
   if (state.readings.length === 1) body.innerHTML = '';
   const tr = document.createElement('tr');
-  tr.className = 'row-new mono text-[12.5px] text-slate-700';
+  tr.className = 'row-new mono text-[12px] text-stone-700';
   tr.innerHTML = `
-    <td class="px-5 py-2.5 text-slate-500">${r.n}</td>
-    <td class="px-4 py-2.5 text-slate-600">${fmtT(r.t)}.${String(r.t.getMilliseconds()).padStart(3,'0')}</td>
+    <td class="px-5 py-2.5 text-stone-500">${r.n}</td>
+    <td class="px-4 py-2.5 text-stone-600">${fmtT(r.t)}.${String(r.t.getMilliseconds()).padStart(3,'0')}</td>
     ${SENSORS.map(s => {
       const flagged = r.flags.some(f => f.startsWith(s.id));
-      return `<td class="px-4 py-2.5" style="color:${flagged?'#b45309':'#1f2937'};${flagged?'font-weight:700':''}">${r.vals[s.id].toFixed(s.dp)}</td>`;
+      return `<td class="px-4 py-2.5" style="color:${flagged?'#b45309':'#292524'};${flagged?'font-weight:700':''}">${r.vals[s.id].toFixed(s.dp)}</td>`;
     }).join('')}
-    <td class="px-4 py-2.5 text-right">${r.flags.length
-      ? `<span class="px-2 py-0.5 rounded-md bg-amber-50 border border-amber-300 text-amber-800 font-semibold text-[10.5px]">${r.flags.join(' · ')}</span>`
-      : `<span class="text-slate-400">—</span>`}</td>`;
+    <td class="px-4 py-2.5 text-right ui">${r.flags.length
+      ? `<span class="px-2 py-0.5 rounded bg-amber-50 border border-amber-300 text-amber-800 font-bold text-[10px]">${r.flags.join(' · ')}</span>`
+      : `<span class="text-stone-400">—</span>`}</td>`;
   body.prepend(tr);
   while (body.rows.length > 250) body.deleteRow(-1);
   $('tableInfo').textContent = `showing latest ${Math.min(250, state.readings.length)} of ${state.readings.length}`;
 }
-
 function renderStats(){
   SENSORS.forEach(s => {
     const chip = $(`chip-${s.id}`);
-    const rows = state.readings;
-    if (!rows.length){ chip.innerHTML = 'no samples'; return; }
+    if (!state.readings.length){ chip.innerHTML = 'no samples'; return; }
     let lo = Infinity, hi = -Infinity, sum = 0;
-    rows.forEach(r => { const v = r.vals[s.id]; lo=Math.min(lo,v); hi=Math.max(hi,v); sum+=v; });
-    const avg = sum/rows.length;
+    state.readings.forEach(r => { const v = r.vals[s.id]; lo=Math.min(lo,v); hi=Math.max(hi,v); sum+=v; });
     chip.innerHTML =
-      `min <span class="text-slate-800 font-semibold">${lo.toFixed(s.dp)}</span> · ` +
-      `avg <span style="color:${s.color};font-weight:700">${avg.toFixed(s.dp)}</span> · ` +
-      `max <span class="text-slate-800 font-semibold">${hi.toFixed(s.dp)}</span>`;
+      `min <span class="text-stone-800 font-semibold">${lo.toFixed(s.dp)}</span> · ` +
+      `avg <span style="color:${s.color};font-weight:700">${(sum/state.readings.length).toFixed(s.dp)}</span> · ` +
+      `max <span class="text-stone-800 font-semibold">${hi.toFixed(s.dp)}</span>`;
   });
 }
-
 function syncCollectorUI(){
   const n = state.readings.length;
   $('statSamples').textContent = n;
@@ -1183,81 +1133,70 @@ function syncCollectorUI(){
   const dur = state.recStartedAt ? Math.floor(((state.recording?Date.now():state.recEndedAt||Date.now()) - state.recStartedAt)/1000) : 0;
   $('statDuration').textContent = `${pad(Math.floor(dur/60))}:${pad(dur%60)}`;
 }
-
 function exportCSV(){
   if (!state.readings.length) return;
   const head = ['sample','iso_time','timestamp_ms', ...SENSORS.map(s => `${s.id}_${s.unit.replace(/[°%]/g,'')}`), 'flags'];
   const lines = state.readings.map(r =>
     [r.n, r.t.toISOString(), r.t.getTime(), ...SENSORS.map(s => r.vals[s.id]), r.flags.join('|')||'ok'].join(','));
-  const blob = new Blob([head.join(',') + '\n' + lines.join('\n')], { type:'text/csv' });
+  const blob = new Blob([head.join(',')+'\n'+lines.join('\n')], { type:'text/csv' });
   const a = document.createElement('a');
   const d = new Date();
   a.href = URL.createObjectURL(blob);
-  a.download = `sentinel-run-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  a.download = `telemetry-run-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
 }
 
-/* ═══════════════════════ CONTROLS ═══════════════════════ */
-const REC_IDLE_CLS  = 'flex items-center gap-3 rounded-2xl px-6 py-3.5 font-bold text-sm transition-all bg-white border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50 shadow-sm';
-const REC_LIVE_CLS  = 'rec-active flex items-center gap-3 rounded-2xl px-6 py-3.5 font-bold text-sm transition-all bg-red-50 border-2 border-red-500 text-red-700 shadow-sm';
+/* ═══════════ CONTROLS ═══════════ */
+const REC_IDLE = 'flex items-center gap-2.5 rounded-lg px-5 py-3 font-bold text-[13px] uppercase tracking-wider transition-colors bg-white border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white';
+const REC_LIVE = 'rec-active flex items-center gap-2.5 rounded-lg px-5 py-3 font-bold text-[13px] uppercase tracking-wider transition-colors bg-red-600 border-2 border-red-600 text-white hover:bg-red-700';
 $('btnRecord').addEventListener('click', () => {
   state.recording = !state.recording;
-  const btn = $('btnRecord');
   if (state.recording){
     state.recStartedAt = Date.now(); state.recEndedAt = null;
     state.recEvery = +$('selInterval').value;
-    btn.className = REC_LIVE_CLS;
-    $('recIcon').innerHTML = '<i data-lucide="square" class="w-4.5 h-4.5"></i>';
+    $('btnRecord').className = REC_LIVE;
+    $('recIcon').innerHTML = IC.square;
     $('recLabel').textContent = 'Stop Capture';
     $('navRecPill').classList.remove('hidden'); $('navRecPill').classList.add('flex');
     collectSample();
   } else {
     state.recEndedAt = Date.now();
-    btn.className = REC_IDLE_CLS;
-    $('recIcon').innerHTML = '<i data-lucide="circle-dot" class="w-4.5 h-4.5"></i>';
+    $('btnRecord').className = REC_IDLE;
+    $('recIcon').innerHTML = IC.dot;
     $('recLabel').textContent = 'Resume Capture';
     $('navRecPill').classList.add('hidden'); $('navRecPill').classList.remove('flex');
   }
-  lucide.createIcons();
   syncCollectorUI();
 });
 $('selInterval').addEventListener('change', e => { state.recEvery = +e.target.value; });
 $('btnCsv').addEventListener('click', exportCSV);
 $('btnClear').addEventListener('click', () => {
-  state.recording = false;
-  state.readings = []; state.alerts = [];
+  state.recording = false; state.readings = []; state.alerts = [];
   renderAlerts();
-  $('tableBody').innerHTML = `<tr><td colspan="9" class="mono text-[13px] text-slate-500 text-center py-16">Dataset cleared. Press <span class="text-emerald-700 font-bold">Start Capture</span> to begin a new run…</td></tr>`;
+  $('tableBody').innerHTML = `<tr><td colspan="9" class="mono text-[12px] text-stone-500 text-center py-16">Dataset cleared. Press <span class="text-emerald-700 font-bold">Start Capture</span> to begin a new run…</td></tr>`;
   $('tableInfo').textContent = 'showing latest 250';
   SENSORS.forEach(s => { s.lo = s.value; s.hi = s.value; s.status='ok'; });
   $('recLabel').textContent = 'Start Capture';
-  $('btnRecord').className = REC_IDLE_CLS;
-  $('recIcon').innerHTML = '<i data-lucide="circle-dot" class="w-4.5 h-4.5"></i>';
+  $('btnRecord').className = REC_IDLE;
+  $('recIcon').innerHTML = IC.dot;
   $('navRecPill').classList.add('hidden'); $('navRecPill').classList.remove('flex');
   $('statDuration').textContent = '00:00';
-  lucide.createIcons(); renderStats(); syncCollectorUI();
+  renderStats(); syncCollectorUI();
 });
 $('btnAnomaly').addEventListener('click', () => {
   const s = SENSORS[Math.floor(Math.random()*SENSORS.length)];
   s.anom = 8;
   const card = $(`card-${s.id}`);
-  card.style.borderColor = '#f59e0b';
-  setTimeout(() => card.style.borderColor = '', 4000);
+  card.style.borderColor = '#d97706';
+  setTimeout(() => card.style.borderColor = '', 3500);
 });
-
 $('btnStream').addEventListener('click', () => {
   state.streaming = !state.streaming;
-  $('streamIcon').innerHTML = state.streaming
-    ? '<i data-lucide="pause" class="w-5 h-5 text-amber-600"></i>'
-    : '<i data-lucide="play" class="w-5 h-5 text-emerald-600"></i>';
+  $('streamIcon').innerHTML = state.streaming ? IC.pause.replaceAll('COLOR','#b45309') : IC.play.replaceAll('COLOR','#047857');
   $('streamBtnLabel').textContent = state.streaming ? 'Pause' : 'Resume';
-  $('streamLabel').textContent = state.streaming ? 'STREAM LIVE' : 'STREAM PAUSED';
-  $('streamPip').className = state.streaming ? 'pip pip-ok' : 'pip pip-warn';
-  lucide.createIcons();
 });
 
-/* ═══════════════════════ TABS ═══════════════════════ */
+/* ═══════════ TABS ═══════════ */
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
   b.classList.add('active');
@@ -1267,34 +1206,26 @@ document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', (
     if (k === v){ el.classList.remove('hidden'); el.style.animation='none'; void el.offsetWidth; el.style.animation=''; }
     else el.classList.add('hidden');
   });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
   if (v === 'live') requestAnimationFrame(() => { SENSORS.forEach(drawSpark); drawMainChart(); });
 }));
 document.querySelectorAll('.js-goto').forEach(b => b.addEventListener('click', () =>
   document.querySelector(`.tab-btn[data-view="${b.dataset.v}"]`)?.click()));
 
-/* ═══════════════════════ READING PROGRESS + SCROLLSPY ═══════════════════════ */
+/* ═══════════ PROGRESS BAR ═══════════ */
 window.addEventListener('scroll', () => {
   const h = document.documentElement;
-  const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
-  $('progressBar').style.width = (p * 100) + '%';
+  $('progressBar').style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100) + '%';
 }, { passive:true });
-const spyLinks = document.querySelectorAll('.spy-link');
-const spyObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) spyLinks.forEach(l =>
-      l.classList.toggle('spy-on', l.getAttribute('href') === '#' + e.target.id));
-  });
-}, { rootMargin: '-15% 0px -70% 0px' });
-document.querySelectorAll('[data-spy]').forEach(s => spyObs.observe(s));
 
-/* ═══════════════════════ MAIN LOOP ═══════════════════════ */
+/* ═══════════ MAIN LOOP ═══════════ */
+$('streamIcon').innerHTML = IC.pause.replaceAll('COLOR','#b45309');
+$('recIcon').innerHTML = IC.dot;
 function tickLoop(){
   if (state.streaming){
     state.tick++;
     $('tickCount').textContent = state.tick;
-    simulate();
-    renderCards();
+    simulate(); renderCards();
     if (!$('view-live').classList.contains('hidden')) drawMainChart();
     if (state.recording && state.tick % state.recEvery === 0) collectSample();
   }
@@ -1306,12 +1237,12 @@ function tickLoop(){
   if (state.recording) syncCollectorUI();
 }
 
-/* ═══════════════════════ INIT ═══════════════════════ */
+/* ═══════════ INIT ═══════════ */
 buildCards(); buildChartTabs(); buildTableHead(); buildStatChips();
 for (let i=0;i<40;i++){ simulate(); }
 SENSORS.forEach(s => { s.status='ok'; s.lo=s.value; s.hi=s.value; });
 state.alerts = []; renderAlerts();
-renderCards(); drawMainChart(); lucide.createIcons();
+renderCards(); drawMainChart();
 setInterval(tickLoop, 1000); tickLoop();
 window.addEventListener('resize', () => { SENSORS.forEach(drawSpark); drawMainChart(); });
 </script>
