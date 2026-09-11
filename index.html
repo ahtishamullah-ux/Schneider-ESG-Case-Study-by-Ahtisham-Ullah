@@ -99,6 +99,58 @@
   @keyframes rowIn{from{background:#eff6ff}to{background:transparent}}
   select{appearance:none;-webkit-appearance:none}
   ::selection{background:rgba(30,64,175,.15)}
+
+  /* ══════ WORKFLOW / ALGORITHM STYLES ══════ */
+  .wf-node{position:relative;background:#fff;border:1px solid var(--line);border-left:3px solid #a8a29e;border-radius:9px;padding:.95rem 1.15rem;
+           transition:border-color .3s,box-shadow .3s,transform .3s,background .3s}
+  .wf-node .wf-num{font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.12em;color:#78716c;transition:color .3s}
+  .wf-node .wf-ttl{font-family:'Inter';font-weight:700;font-size:13.5px;color:var(--ink);letter-spacing:.01em}
+  .wf-node .wf-txt{font-size:1rem;line-height:1.5;color:var(--sub);margin-top:.2rem}
+  .wf-node.on{border-left-color:#1d4ed8;border-color:#bfd0f5;background:#f7faff;
+              box-shadow:0 10px 26px -18px rgba(29,78,216,.75);transform:translateY(-2px)}
+  .wf-node.on .wf-num{color:#1d4ed8}
+  .wf-node.done{border-left-color:#047857}
+  .wf-term{background:var(--ink);color:#fafaf9;border-radius:9999px;padding:.6rem 1.6rem;font-family:'Inter';
+           font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;transition:box-shadow .3s,transform .3s}
+  .wf-term.on{box-shadow:0 0 0 4px rgba(29,78,216,.18);transform:translateY(-2px)}
+  .wf-term.end{background:#065f46}
+  .wf-arrow{width:1px;height:26px;background:#a8a29e;margin:0 auto;position:relative}
+  .wf-arrow::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+                   border-left:4.5px solid transparent;border-right:4.5px solid transparent;border-top:7px solid #78716c}
+  .wf-dia{width:150px;height:150px;transform:rotate(45deg);background:#fffdf6;border:1.5px solid #d6b877;border-radius:12px;
+          display:grid;place-items:center;transition:box-shadow .3s,border-color .3s}
+  .wf-dia.on{border-color:#b45309;box-shadow:0 0 0 4px rgba(180,83,9,.14)}
+  .wf-dia > div{transform:rotate(-45deg);text-align:center;padding:.4rem}
+  .wf-loop{border:1.5px dashed #d6b877;border-right:0;border-radius:12px 0 0 12px}
+
+  /* algorithm (LaTeX algorithm2e look) */
+  .algo{background:#fff;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule);padding:0}
+  .algo-cap{font-family:'Inter';font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+            color:var(--ink);padding:.7rem .2rem;border-bottom:1px solid #78716c}
+  .algo-body{font-family:'JetBrains Mono';font-size:12.2px;line-height:2;color:#292524;padding:.9rem .2rem;overflow-x:auto}
+  .algo-body .ln{display:inline-block;width:2.1rem;color:#a8a29e;user-select:none;font-size:10.5px}
+  .kw{color:#1d4ed8;font-weight:700}
+  .cm{color:#78716c;font-style:italic}
+  .fn{color:#065f46}
+  .hl{color:#b45309;font-weight:700}
+  .algo-line{white-space:pre;display:block;border-radius:4px;padding:0 .3rem;transition:background .3s}
+  .algo-line.on{background:#eff6ff}
+
+  /* flywheel ring */
+  .ring-wrap{position:relative;width:100%;max-width:520px;aspect-ratio:1/1;margin:0 auto}
+  .ring-node{position:absolute;width:31%;transform:translate(-50%,-50%);background:#fff;border:1px solid var(--line);
+             border-radius:10px;padding:.6rem .55rem;text-align:center;box-shadow:0 1px 2px rgba(28,25,23,.06);
+             transition:box-shadow .35s,border-color .35s,transform .35s}
+  .ring-node.on{border-color:#1d4ed8;box-shadow:0 12px 28px -18px rgba(29,78,216,.9);transform:translate(-50%,-50%) scale(1.07)}
+  .ring-node .rn-k{font-family:'JetBrains Mono';font-size:9.5px;font-weight:700;color:#78716c;letter-spacing:.1em}
+  .ring-node.on .rn-k{color:#1d4ed8}
+  .ring-node .rn-t{font-family:'Inter';font-size:12px;font-weight:700;color:var(--ink);margin-top:.1rem}
+  .ring-node .rn-s{font-size:.9rem;color:var(--sub);line-height:1.35;margin-top:.12rem}
+  .ring-svg{position:absolute;inset:0;width:100%;height:100%}
+  .ring-dash{stroke-dasharray:7 9;animation:spin 26s linear infinite;transform-origin:center}
+  @keyframes spin{to{stroke-dashoffset:-320}}
+  .wf-mini{border:1px solid var(--line);border-radius:8px;background:#fff;padding:.5rem .7rem;font-family:'Inter';
+           font-size:11px;font-weight:600;color:var(--ink);text-align:center;line-height:1.3}
 </style>
 </head>
 <body class="min-h-screen">
@@ -115,10 +167,11 @@
         <div class="text-[9.5px] font-medium tracking-[0.14em] text-stone-500 uppercase mt-0.5">Case Study · 2026</div>
       </div>
     </div>
-    <nav class="flex items-center gap-5 ml-auto h-14">
-      <button data-view="paper" class="tab-btn active h-14">Case Study</button>
-      <button data-view="live" class="tab-btn h-14">Live Dashboard</button>
-      <button data-view="test" class="tab-btn h-14">Test Dashboard <span id="navSampleBadge" class="mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 normal-case tracking-normal">0</span></button>
+    <nav class="flex items-center gap-5 ml-auto h-14 overflow-x-auto thin-scroll">
+      <button data-view="paper" class="tab-btn active h-14 whitespace-nowrap">Case Study</button>
+      <button data-view="flow" class="tab-btn h-14 whitespace-nowrap">Workflow</button>
+      <button data-view="live" class="tab-btn h-14 whitespace-nowrap">Live Dashboard</button>
+      <button data-view="test" class="tab-btn h-14 whitespace-nowrap">Test Dashboard <span id="navSampleBadge" class="mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 normal-case tracking-normal">0</span></button>
     </nav>
     <div class="hidden md:flex items-center gap-3">
       <div id="navRecPill" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full border border-red-300 bg-red-50">
@@ -239,7 +292,7 @@
             <a href="#s7" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">7&ensp;Performance Outcomes</a>
             <a href="#s2" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">2&ensp;Literature Review</a>
             <a href="#s8" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">8&ensp;Discussion</a>
-            <a href="#s3" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">3&ensp;Methodology</a>
+            <a href="#s3" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">3&ensp;Methodology &amp; Research Workflow</a>
             <a href="#s9" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">9&ensp;Challenges and Limitations</a>
             <a href="#s4" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">4&ensp;Case Context: Schneider Electric</a>
             <a href="#s10" class="py-1 text-stone-700 hover:text-stone-950 hover:underline underline-offset-4">10&ensp;Recommendations</a>
@@ -318,7 +371,7 @@
 
         <!-- 3 -->
         <section id="s3" data-spy>
-          <h2 class="ph2"><span class="n">Section 03</span>Methodology</h2>
+          <h2 class="ph2"><span class="n">Section 03</span>Methodology &amp; Research Workflow</h2>
           <p>
             The research adopts a qualitative, single instrumental case study following Yin.<sup>[1]</sup> Schneider
             Electric was selected through purposive, criterion sampling: it is an extreme and revelatory case — the only
@@ -334,6 +387,28 @@
             Analysis proceeded by chronological process-tracing of the 2005–2025 period, coding initiatives against the
             classical E-S-G pillars, and confronting stated targets with independently rated outcomes.
           </p>
+
+          <!-- Figure 3 · mini research workflow -->
+          <figure class="figbox">
+            <div class="tabcap"><b>Figure 3.</b>&ensp;Research workflow in seven phases (abridged). The full, animated protocol — including the triangulation decision gate and the implementation algorithm — is presented on the <i>Workflow</i> page.</div>
+            <div class="ui grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+              <div class="wf-mini">P0<br><span class="font-normal text-stone-500">Case selection</span></div>
+              <div class="wf-mini">P1<br><span class="font-normal text-stone-500">RQ definition</span></div>
+              <div class="wf-mini">P2<br><span class="font-normal text-stone-500">Evidence collection</span></div>
+              <div class="wf-mini">P3<br><span class="font-normal text-stone-500">Process-tracing</span></div>
+              <div class="wf-mini">P4<br><span class="font-normal text-stone-500">E-S-G coding</span></div>
+              <div class="wf-mini" style="border-color:#d6b877;background:#fffdf6">GATE<br><span class="font-normal text-amber-800">Triangulate?</span></div>
+              <div class="wf-mini">P5<br><span class="font-normal text-stone-500">Target vs outcome</span></div>
+              <div class="wf-mini">P6<br><span class="font-normal text-stone-500">Synthesis</span></div>
+            </div>
+            <div class="text-center mt-4">
+              <button class="js-goto ui text-[11.5px] font-bold tracking-[0.12em] uppercase px-4 py-2.5 rounded-lg border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-colors" data-v="flow">
+                Open the full workflow &amp; algorithm →
+              </button>
+            </div>
+            <div class="figcap">Phases P2–P4 iterate until the three evidence streams converge (see Algorithm 1).</div>
+          </figure>
+
           <p>
             Limitations are acknowledged in Section 9: disclosure-based sources risk favourable self-presentation, and a
             single case constrains statistical generalisation; analytic generalisation to theory is nonetheless
@@ -449,7 +524,7 @@
               <li><strong>Incentivise</strong> — executive pay and bank pricing linked to the score;</li>
               <li><strong>Monetise</strong> — impact revenues fund the next cycle of instrumentation.</li>
             </ol>
-            <div class="figcap">Synthesised from evidence streams (i)–(iii); each stage is developed in Sections 5–7.</div>
+            <div class="figcap">Synthesised from evidence streams (i)–(iii); each stage is developed in Sections 5–7. An animated version appears on the <i>Workflow</i> page.</div>
           </figure>
         </section>
 
@@ -685,8 +760,13 @@
           </div>
         </footer>
 
-        <!-- bridge to dashboards -->
-        <div class="ui grid sm:grid-cols-2 gap-3 mt-6 mb-4">
+        <!-- bridge to workflow + dashboards -->
+        <div class="ui grid sm:grid-cols-3 gap-3 mt-6 mb-4">
+          <button class="js-goto card px-5 py-4 text-left group" data-v="flow">
+            <div class="sc mb-1.5">Appendix</div>
+            <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">Workflow &amp; Algorithm →</div>
+            <p class="text-[13px] text-stone-500 mt-1 leading-snug">Research protocol, flywheel and pseudocode (Section 3).</p>
+          </button>
           <button class="js-goto card px-5 py-4 text-left group" data-v="live">
             <div class="sc mb-1.5">Demonstrator I</div>
             <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">Live Telemetry Dashboard →</div>
@@ -702,7 +782,198 @@
     </div>
   </section>
 
-  <!-- ══════════════ PAGE 2 · LIVE DASHBOARD ══════════════ -->
+  <!-- ══════════════ PAGE 2 · WORKFLOW / ALGORITHM ══════════════ -->
+  <section id="view-flow" class="view hidden">
+    <div class="max-w-[1100px] mx-auto px-5 lg:px-8">
+
+      <div class="pt-9 pb-7 flex flex-wrap items-end justify-between gap-5 border-b border-stone-900">
+        <div>
+          <div class="sc mb-2">Appendix A · Method &amp; model</div>
+          <h1 class="text-[2rem] md:text-[2.6rem] font-semibold text-stone-900 leading-none">Research Workflow &amp; <span class="italic">Algorithm</span></h1>
+          <p class="ui text-stone-600 text-[13.5px] mt-3 max-w-2xl leading-relaxed">
+            Part A traces the seven-phase research protocol used to produce the manuscript. Part B formalises the
+            digital–ESG flywheel that the evidence revealed. Part C states both as executable pseudocode.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2 ui">
+          <button id="wfRun" class="px-4 py-3 rounded-lg border-2 border-stone-900 bg-stone-900 text-white text-[12px] font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors">▶ Run workflow</button>
+          <button id="wfStep" class="card px-4 py-3 text-[12px] font-bold uppercase tracking-wider text-stone-800 hover:border-stone-500 transition-colors">Step ▸</button>
+          <button id="wfReset" class="card px-4 py-3 text-[12px] font-bold uppercase tracking-wider text-stone-600 hover:border-stone-500 transition-colors">Reset ↺</button>
+        </div>
+      </div>
+
+      <!-- status strip -->
+      <div class="dash-card mt-6 px-5 py-3.5 flex flex-wrap items-center gap-x-6 gap-y-2 ui">
+        <div class="flex items-center gap-2">
+          <span class="pip" id="wfPip" style="background:#a8a29e"></span>
+          <span class="text-[12px] font-bold uppercase tracking-wider text-stone-700" id="wfState">Idle</span>
+        </div>
+        <div class="mono text-[11.5px] text-stone-500">step <span id="wfIdx" class="text-stone-900 font-bold">0</span> / 10</div>
+        <div class="mono text-[11.5px] text-stone-500">iteration <span id="wfIter" class="text-stone-900 font-bold">1</span></div>
+        <div class="flex-1 min-w-[140px]"><div class="stat-bar"><div id="wfBar" style="width:0%;background:#1c1917"></div></div></div>
+        <div class="mono text-[11.5px] text-stone-500" id="wfNow">—</div>
+      </div>
+
+      <div class="grid lg:grid-cols-[1.05fr,.95fr] gap-4 mt-4">
+
+        <!-- ── PART A · protocol flowchart ── -->
+        <div class="dash-card p-6">
+          <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800 pb-3 border-b border-[#e3e0da]">Part A · Research protocol flowchart</h2>
+
+          <div class="flex flex-col items-stretch mt-5">
+            <div class="flex justify-center"><div class="wf-term" data-w="0">Start · research design</div></div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="1">
+              <div class="wf-num">P0 · SAMPLING</div>
+              <div class="wf-ttl">Case selection</div>
+              <div class="wf-txt">Purposive criterion sampling → Schneider Electric as extreme &amp; revelatory case (Global 100 #1 twice).</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="2">
+              <div class="wf-num">P1 · FRAMING</div>
+              <div class="wf-ttl">Define RQ1–RQ3</div>
+              <div class="wf-txt">Operationalisation, dual performance effect, transferable lessons.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="3">
+              <div class="wf-num">P2 · DATA</div>
+              <div class="wf-ttl">Collect three evidence streams</div>
+              <div class="wf-txt">(i) corporate documents · (ii) third-party ratings · (iii) academic literature.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="4">
+              <div class="wf-num">P3 · ANALYSIS</div>
+              <div class="wf-ttl">Chronological process-tracing</div>
+              <div class="wf-txt">Order every initiative 2005 → 2025 and link cause to consequence.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="5">
+              <div class="wf-num">P4 · CODING</div>
+              <div class="wf-ttl">Code against E-S-G pillars</div>
+              <div class="wf-txt">Each initiative tagged Environmental / Social / Governance + digital enabler.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <!-- decision -->
+            <div class="relative flex justify-center py-4">
+              <div class="wf-dia" data-w="6">
+                <div>
+                  <div class="mono text-[9.5px] font-bold tracking-widest text-amber-700">DECISION</div>
+                  <div class="ui font-bold text-[13.5px] text-stone-900 leading-tight mt-1">Do the three<br>streams triangulate?</div>
+                </div>
+              </div>
+              <span class="mono text-[10.5px] font-bold text-amber-700 absolute right-1 top-1/2 -translate-y-1/2">NO ↻</span>
+              <span class="mono text-[10.5px] font-bold text-emerald-700 absolute left-1 bottom-2">YES ↓</span>
+            </div>
+
+            <div class="wf-loop h-16 w-[72%] mx-auto flex items-center justify-center -mt-1 mb-1">
+              <span class="ui text-[10.5px] font-semibold text-amber-800 bg-white px-3 py-1 rounded-full border border-amber-300">↻ NO → return to P2 · widen the evidence base</span>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="7">
+              <div class="wf-num">P5 · VALIDATION</div>
+              <div class="wf-ttl">Confront targets with rated outcomes</div>
+              <div class="wf-txt">SSI claims tested against Corporate Knights, MSCI, EcoVadis, Sustainalytics.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="8">
+              <div class="wf-num">P6 · SYNTHESIS</div>
+              <div class="wf-ttl">Build the flywheel model</div>
+              <div class="wf-txt">Derive the six-stage causal loop (Part B) and the five-step recommendation sequence.</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="wf-node" data-w="9">
+              <div class="wf-num">P7 · WRITE-UP</div>
+              <div class="wf-ttl">Report limitations &amp; generalise analytically</div>
+              <div class="wf-txt">Single-case caveats stated; theory-level generalisation per Yin (2018).</div>
+            </div>
+            <div class="wf-arrow"></div>
+
+            <div class="flex justify-center"><div class="wf-term end" data-w="10">End · validated findings</div></div>
+          </div>
+        </div>
+
+        <!-- ── right column ── -->
+        <div class="space-y-4">
+
+          <!-- PART B · flywheel -->
+          <div class="dash-card p-6">
+            <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800 pb-3 border-b border-[#e3e0da]">Part B · The digital–ESG flywheel</h2>
+            <div class="ring-wrap mt-4" id="ringWrap">
+              <svg class="ring-svg" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#e3e0da" stroke-width="1.1"/>
+                <circle class="ring-dash" cx="50" cy="50" r="30" fill="none" stroke="#1d4ed8" stroke-width="1.1" opacity=".45"/>
+              </svg>
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-[30%]">
+                <div class="mono text-[9px] font-bold tracking-[.18em] text-stone-500">LOOP</div>
+                <div class="ui font-bold text-[12.5px] text-stone-900 leading-tight mt-0.5">Digital–ESG<br>flywheel</div>
+                <div class="mono text-[9px] text-stone-500 mt-1" id="ringNow">idle</div>
+              </div>
+            </div>
+            <div class="figcap mt-1">Each turn funds the next: impact revenue → more instrumentation → better data → higher score.</div>
+          </div>
+
+          <!-- PART C · pseudocode -->
+          <div class="dash-card p-6">
+            <h2 class="ui font-bold text-[13px] tracking-[0.12em] uppercase text-stone-800 pb-3 border-b border-[#e3e0da] mb-4">Part C · Pseudocode</h2>
+
+            <div class="algo">
+              <div class="algo-cap">Algorithm 1 — ResearchProtocol(case, 2005…2025)</div>
+              <div class="algo-body" id="algo1"></div>
+            </div>
+
+            <div class="algo mt-6">
+              <div class="algo-cap">Algorithm 2 — SustainablePerformance(firm)</div>
+              <div class="algo-body" id="algo2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- mapping table -->
+      <div class="dash-card p-6 mt-4">
+        <div class="tabcap !text-left"><b>Table 4.</b>&ensp;Workflow stages mapped to inputs, methods, outputs and the corresponding manuscript section.</div>
+        <div class="overflow-x-auto thin-scroll">
+          <table class="bt min-w-[760px]">
+            <thead><tr><th>Phase</th><th>Input</th><th>Method / instrument</th><th>Output</th><th>Section</th></tr></thead>
+            <tbody>
+              <tr><td class="num">P0</td><td>Population of listed industrials</td><td>Purposive criterion sampling</td><td>Selected case</td><td class="num">§3</td></tr>
+              <tr><td class="num">P1</td><td>Literature gap (digital–ESG nexus)</td><td>Gap analysis</td><td>RQ1–RQ3</td><td class="num">§1–2</td></tr>
+              <tr><td class="num">P2</td><td>Reports, ratings, journals</td><td>Document collection · triangulation</td><td>Evidence corpus</td><td class="num">§3</td></tr>
+              <tr><td class="num">P3</td><td>Evidence corpus</td><td>Chronological process-tracing</td><td>2005–2025 timeline</td><td class="num">§4–6</td></tr>
+              <tr><td class="num">P4</td><td>Timeline of initiatives</td><td>Thematic coding (E-S-G + digital)</td><td>Coded initiative set</td><td class="num">§5–6</td></tr>
+              <tr><td class="num">Gate</td><td>Coded set</td><td>Convergence check across streams</td><td>Accept or re-collect (→P2)</td><td class="num">§3</td></tr>
+              <tr><td class="num">P5</td><td>Stated targets</td><td>Confrontation with rated outcomes</td><td>Validated performance record</td><td class="num">§7</td></tr>
+              <tr><td class="num">P6</td><td>Validated record</td><td>Model building</td><td>Flywheel + 5-step sequence</td><td class="num">§8, §10</td></tr>
+              <tr><td class="num">P7</td><td>Model</td><td>Reflexive critique</td><td>Limitations &amp; conclusion</td><td class="num">§9, §11</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="ui grid sm:grid-cols-2 gap-3 mt-4">
+        <button class="js-goto card px-5 py-4 text-left group" data-v="paper">
+          <div class="sc mb-1.5">Back</div>
+          <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">← Return to the manuscript</div>
+        </button>
+        <button class="js-goto card px-5 py-4 text-left group" data-v="live">
+          <div class="sc mb-1.5">Next</div>
+          <div class="font-bold text-stone-900 text-[15px] group-hover:underline underline-offset-4">Live Telemetry Dashboard →</div>
+          <p class="text-[13px] text-stone-500 mt-1 leading-snug">See stage 1–2 of the flywheel (instrument → measure) in operation.</p>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ PAGE 3 · LIVE DASHBOARD ══════════════ -->
   <section id="view-live" class="view hidden">
     <div class="max-w-[1200px] mx-auto px-5 lg:px-8">
       <div class="pt-9 pb-7 flex flex-wrap items-end justify-between gap-5 border-b border-stone-900">
@@ -755,7 +1026,7 @@
     </div>
   </section>
 
-  <!-- ══════════════ PAGE 3 · TEST DASHBOARD ══════════════ -->
+  <!-- ══════════════ PAGE 4 · TEST DASHBOARD ══════════════ -->
   <section id="view-test" class="view hidden">
     <div class="max-w-[1200px] mx-auto px-5 lg:px-8">
       <div class="pt-9 pb-7 flex flex-wrap items-end justify-between gap-5 border-b border-stone-900">
@@ -858,6 +1129,137 @@ const $ = id => document.getElementById(id);
 const fmtT = d => d.toTimeString().slice(0,8);
 const pad = n => String(n).padStart(2,'0');
 const hexA = (hex,a) => { const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+
+/* ═══════════════════════════════════════════════════════════
+   WORKFLOW / ALGORITHM ENGINE  (Appendix A)
+   ═══════════════════════════════════════════════════════════ */
+const WF_STEPS = [
+  { label:'Start · research design',            algo1:[0],        ring:null },
+  { label:'P0 · Case selection',                algo1:[1,2],      ring:null },
+  { label:'P1 · Define RQ1–RQ3',                algo1:[3],        ring:null },
+  { label:'P2 · Collect evidence streams',      algo1:[4,5,6],    ring:0 },
+  { label:'P3 · Chronological process-tracing', algo1:[7],        ring:1 },
+  { label:'P4 · Code against E-S-G pillars',    algo1:[8],        ring:2 },
+  { label:'GATE · Triangulation check',         algo1:[9,10],     ring:null },
+  { label:'P5 · Targets vs rated outcomes',     algo1:[11],       ring:3 },
+  { label:'P6 · Build flywheel model',          algo1:[12],       ring:4 },
+  { label:'P7 · Limitations & generalisation',  algo1:[13],       ring:5 },
+  { label:'End · validated findings',           algo1:[14],       ring:null },
+];
+
+const RING = [
+  { k:'01', t:'Instrument', s:'IoT sensors on every material flow' },
+  { k:'02', t:'Measure',    s:'Edge telemetry, real time' },
+  { k:'03', t:'Optimise',   s:'AI analytics + digital twins' },
+  { k:'04', t:'Report',     s:'Audited SSI scorecard, quarterly' },
+  { k:'05', t:'Incentivise',s:'Pay & €2.7bn debt indexed to score' },
+  { k:'06', t:'Monetise',   s:'Impact revenue funds next cycle' },
+];
+
+const ALGO1 = [
+  '<span class="kw">input</span> : case c, window [2005, 2025]',
+  '<span class="kw">output</span>: validated findings F, model M',
+  '',
+  'c        \u2190 <span class="fn">purposiveSample</span>(industrials, criterion: extreme &amp; revelatory)',
+  'RQ       \u2190 {RQ1 operationalisation, RQ2 performance, RQ3 lessons}',
+  'E        \u2190 \u2205                                <span class="cm">// evidence corpus</span>',
+  '<span class="kw">for each</span> stream <span class="kw">in</span> {documents, ratings, literature} <span class="kw">do</span>',
+  '     E \u2190 E \u222a <span class="fn">collect</span>(stream, c, window)',
+  'T        \u2190 <span class="fn">processTrace</span>(E)                <span class="cm">// chronological 2005\u21922025</span>',
+  'C        \u2190 <span class="fn">code</span>(T, pillars: {E, S, G} \u00d7 digitalEnabler)',
+  '<span class="kw">while</span> <span class="hl">\u00ac</span><span class="fn">triangulates</span>(C, streams) <span class="kw">do</span>          <span class="cm">// decision gate</span>',
+  '     E \u2190 E \u222a <span class="fn">collect</span>(weakestStream); <span class="kw">goto</span> P2',
+  'V        \u2190 <span class="fn">confront</span>(statedTargets, thirdPartyRatings)',
+  'M        \u2190 <span class="fn">buildModel</span>(V)                   <span class="cm">// the flywheel, Part B</span>',
+  'F        \u2190 <span class="fn">synthesise</span>(M) \u2295 <span class="fn">limitations</span>()   <span class="kw">return</span> F, M',
+];
+
+const ALGO2 = [
+  '<span class="kw">input</span> : firm f, target score \u03c4 = 10/10 (SSI 2025)',
+  '<span class="kw">output</span>: sustainable performance state',
+  '',
+  'flows \u2190 <span class="fn">identifyMaterialESGFlows</span>(f)',
+  '<span class="kw">for each</span> flow \u2208 flows <span class="kw">do</span> <span class="fn">deploySensor</span>(flow, EcoStruxure)   <span class="cm">// 1 instrument</span>',
+  '',
+  'score \u2190 <span class="fn">SSI</span>(f)',
+  '<span class="kw">while</span> score &lt; \u03c4 <span class="kw">and</span> year \u2264 2025 <span class="kw">do</span>',
+  '     data  \u2190 <span class="fn">streamTelemetry</span>(flows)                <span class="cm">// 2 measure</span>',
+  '     plan  \u2190 <span class="fn">digitalTwin</span>(data).<span class="fn">optimise</span>()          <span class="cm">// 3 optimise</span>',
+  '     <span class="fn">execute</span>(plan)',
+  '     score \u2190 <span class="fn">audit</span>(<span class="fn">SSI</span>(f))                        <span class="cm">// 4 report (quarterly)</span>',
+  '     <span class="fn">bindIncentives</span>(execPay, debtPricing, score)   <span class="cm">// 5 incentivise</span>',
+  '     <span class="kw">if</span> score &lt; <span class="hl">expected</span>(year) <span class="kw">then</span>',
+  '          flows \u2190 flows \u222a <span class="fn">supplyChain</span>(f)         <span class="cm">// extend scope 3</span>',
+  '     revenue \u2190 <span class="fn">productise</span>(capability)             <span class="cm">// 6 monetise</span>',
+  '     <span class="fn">reinvest</span>(revenue \u00d7 0.73, instrumentation)',
+  '<span class="kw">return</span> \u27e8score, revenue, ratings\u27e9              <span class="cm">// 7.55/10 · \u20ac38.2bn · AAA</span>',
+];
+
+let wfIdx = -1, wfTimer = null, wfIteration = 1, wfLooped = false;
+
+function buildAlgo(el, lines){
+  el.innerHTML = lines.map((l,i) =>
+    `<span class="algo-line" data-l="${i}"><span class="ln">${l===''?'':String(i+1).padStart(2,'0')}</span>${l}</span>`).join('');
+}
+function buildRing(){
+  const wrap = $('ringWrap');
+  RING.forEach((r,i) => {
+    const ang = (-90 + i*60) * Math.PI/180;
+    const x = 50 + 41*Math.cos(ang), y = 50 + 41*Math.sin(ang);
+    const d = document.createElement('div');
+    d.className = 'ring-node'; d.dataset.r = i;
+    d.style.left = x+'%'; d.style.top = y+'%';
+    d.innerHTML = `<div class="rn-k">${r.k}</div><div class="rn-t">${r.t}</div><div class="rn-s">${r.s}</div>`;
+    d.addEventListener('mouseenter', () => $('ringNow').textContent = r.t.toLowerCase());
+    wrap.appendChild(d);
+  });
+}
+function wfPaint(){
+  document.querySelectorAll('[data-w]').forEach(el => {
+    const i = +el.dataset.w;
+    el.classList.toggle('on', i === wfIdx);
+    el.classList.toggle('done', i < wfIdx);
+  });
+  const cur = WF_STEPS[wfIdx];
+  document.querySelectorAll('#algo1 .algo-line').forEach(l =>
+    l.classList.toggle('on', !!cur && cur.algo1.includes(+l.dataset.l)));
+  document.querySelectorAll('.ring-node').forEach(n =>
+    n.classList.toggle('on', !!cur && cur.ring === +n.dataset.r));
+  document.querySelectorAll('#algo2 .algo-line').forEach((l,i) => {
+    const map = { 0:[3,4], 1:[8], 2:[9,10], 3:[11], 4:[12], 5:[15,16] };
+    l.classList.toggle('on', !!cur && cur.ring !== null && (map[cur.ring]||[]).includes(i));
+  });
+  $('wfIdx').textContent = Math.max(0, wfIdx);
+  $('wfIter').textContent = wfIteration;
+  $('wfBar').style.width = ((Math.max(0,wfIdx)) / 10 * 100) + '%';
+  const st = $('wfState'), pip = $('wfPip');
+  if (wfIdx < 0){ st.textContent = 'Idle'; pip.style.background = '#a8a29e'; }
+  else if (wfIdx === 6 && !wfLooped){ st.textContent = 'Gate · NO → re-collect (P2)'; pip.style.background = '#d97706'; }
+  else if (wfIdx === 10){ st.textContent = 'Complete · findings validated'; pip.style.background = '#059669'; }
+  else { st.textContent = 'Running'; pip.style.background = '#1d4ed8'; }
+  $('wfNow').textContent = wfIdx < 0 ? '—' : WF_STEPS[wfIdx].label;
+  if (cur && cur.ring !== null) $('ringNow').textContent = RING[cur.ring].t.toLowerCase();
+}
+function wfAdvance(){
+  /* the gate loops back to P2 exactly once, demonstrating the iteration */
+  if (wfIdx === 6 && !wfLooped){ wfLooped = true; wfIteration++; wfIdx = 3; wfPaint(); return; }
+  wfIdx = wfIdx >= 10 ? 0 : wfIdx + 1;
+  if (wfIdx === 0){ wfLooped = false; wfIteration = 1; }
+  wfPaint();
+}
+function wfStop(){ clearInterval(wfTimer); wfTimer = null; $('wfRun').textContent = '▶ Run workflow'; }
+$('wfStep').addEventListener('click', () => { wfStop(); wfAdvance(); });
+$('wfReset').addEventListener('click', () => { wfStop(); wfIdx = -1; wfLooped = false; wfIteration = 1; wfPaint(); });
+$('wfRun').addEventListener('click', () => {
+  if (wfTimer){ wfStop(); return; }
+  if (wfIdx >= 10){ wfIdx = -1; wfLooped = false; wfIteration = 1; }
+  $('wfRun').textContent = '❚❚ Pause';
+  wfAdvance();
+  wfTimer = setInterval(() => {
+    wfAdvance();
+    if (wfIdx === 10) wfStop();
+  }, 1500);
+});
 
 /* ═══════════ BUILD UI ═══════════ */
 function buildCards(){
@@ -1201,7 +1603,7 @@ document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', (
   document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
   b.classList.add('active');
   const v = b.dataset.view;
-  ['paper','live','test'].forEach(k => {
+  ['paper','flow','live','test'].forEach(k => {
     const el = $(`view-${k}`);
     if (k === v){ el.classList.remove('hidden'); el.style.animation='none'; void el.offsetWidth; el.style.animation=''; }
     else el.classList.add('hidden');
@@ -1239,6 +1641,7 @@ function tickLoop(){
 
 /* ═══════════ INIT ═══════════ */
 buildCards(); buildChartTabs(); buildTableHead(); buildStatChips();
+buildAlgo($('algo1'), ALGO1); buildAlgo($('algo2'), ALGO2); buildRing(); wfPaint();
 for (let i=0;i<40;i++){ simulate(); }
 SENSORS.forEach(s => { s.status='ok'; s.lo=s.value; s.hi=s.value; });
 state.alerts = []; renderAlerts();
