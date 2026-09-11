@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml · Schneider Electric ESG Case Study
+  Ahtisham Ullah — University of Salento, Lecce (Italy)
+
+  ⚠ BEFORE PUBLISHING: replace every
+       https://USERNAME.github.io/REPOSITORY
+     with your live GitHub Pages URL (keep the trailing slash pattern),
+     and update <lastmod> to your publication date (YYYY-MM-DD).
+
+  Submit at:  https://search.google.com/search-console
+              https://www.bing.com/webmasters
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- ══ Primary document: the single-page manuscript + demonstrators ══ -->
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/</loc>
+    <lastmod>2026-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/25537595/pexels-photo-25537595.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=627&amp;w=1200</image:loc>
+      <image:title>Plate 1 — High-voltage electrical infrastructure</image:title>
+      <image:caption>Transmission and distribution infrastructure at the core of Schneider Electric's energy-management portfolio.</image:caption>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/34222005/pexels-photo-34222005.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=627&amp;w=1200</image:loc>
+      <image:title>Plate 2 — Automated smart-factory manufacturing</image:title>
+      <image:caption>Robotic manufacturing environment in which EcoStruxure continuous telemetry is deployed.</image:caption>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/35105460/pexels-photo-35105460.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=627&amp;w=1200</image:loc>
+      <image:title>Plate 3 — Renewable generation at scale</image:title>
+      <image:caption>Solar and wind assets driving demand for digital energy-management solutions.</image:caption>
+    </image:image>
+  </url>
+
+  <!--
+    The following entries are the manuscript's deep-linked sections.
+    Fragment URLs (#s1 …) are NOT indexed separately by Google; they are
+    listed here only as a machine-readable table of contents for crawlers
+    and archival tools that do resolve them. Delete this block if you want
+    a strictly minimal, Google-canonical sitemap.
+  -->
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s1</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s2</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s3</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s4</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s5</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s6</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s7</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s8</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s9</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s10</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s11</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://USERNAME.github.io/REPOSITORY/#s-refs</loc>
+    <lastmod>2026-01-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority>
+  </url>
+
+</urlset>
